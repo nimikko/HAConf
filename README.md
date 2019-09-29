@@ -1,0 +1,2 @@
+# HAConf
+ Home asssitant configurations
