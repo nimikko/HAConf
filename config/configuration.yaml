@@ -1,0 +1,96 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret lat
+  longitude: !secret lon
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 32
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Helsinki
+  # Customization file
+  customize_glob:
+    "sensor.golf_*":
+      hidden: true
+    "binary_sensor.golf_*":
+      hidden: true
+    "sensor.octavia_*":
+      hidden: true
+    "binary_sensor.octavia_*":
+      hidden: true
+    "input_boolean.octavia_*":
+      hidden: true
+    "input_boolean.golf_*":
+      hidden: true  
+  auth_mfa_modules:
+    - type: totp
+      name: Authenticator app
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+http:
+  base_url: !secret url
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
+
+# Discover some devices automatically
+discovery:
+
+climate:
+  - platform: panasonic_ac
+    username: !secret pana_user
+    password: !secret pana_password
+
+
+# Sensors
+sensor: !include sensors.yaml
+binary_sensor: !include binarysensors.yaml
+
+telegram_bot:
+  - platform: broadcast
+    api_key: !secret telegram_api
+    allowed_chat_ids:
+      - !secret telegram_chat1
+      - !secret telegram_chat2
+      - !secret telegram_chat3
+notify:
+  - name: telegram
+    platform: telegram
+    chat_id: !secret telegram_chat1
+  - name: android
+    platform: fcm-android
+
+input_boolean:
+  golf:
+    name: Golf automaatti
+    icon: mdi:car
+  golf_s:
+  octavia:
+    name: Octavia automaatti
+    icon: mdi:car
+  octavia_s:
+  pumppu:
+    name: Uima-allas pumppu
+input_datetime:
+  golf:
+    name: Golf lämmitys aika
+    has_date: false
+    has_time: true
+  octavia:
+    name: Octavia lämmitys aika
+    has_date: false
+    has_time: true
+   
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml

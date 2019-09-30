@@ -1,0 +1,47 @@
+  - platform: yr
+  - platform: onewire
+    names:
+      28-011437afeeaa: Takka
+      #28-02131ac144aa: Uima-allas Tulo Vihreä
+      #28-0114384070aa: Uima-allas Valkoinen
+      #28-0114377906aa: Aurinkenno Punainen
+      28-0319a2792aa7: Ulko
+      28-0316a27901fd: Sisä
+      28-0316a2794874: Sauna
+  - platform: time_date
+    display_options:
+      - 'time'
+  - platform: template
+    sensors:
+      golf_0:
+        value_template:
+          "{%if (state_attr('input_datetime.golf', 'minute') | int >= 30) %}
+           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int, state_attr('input_datetime.golf', 'minute') | int -30) }}
+         {% else %}
+           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -1, state_attr('input_datetime.golf', 'minute') | int +30) }}
+         {% endif %}"
+      golf_10:
+        value_template:   
+           "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -1, state_attr('input_datetime.golf', 'minute') | int) }}"
+      golf_20:
+        value_template:   
+           "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -2, state_attr('input_datetime.golf', 'minute') | int) }}"
+      golf_s:
+        value_template:   
+           "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int +1, state_attr('input_datetime.golf', 'minute') | int) }}"
+      octavia_0:
+        value_template:
+          "{%if (state_attr('input_datetime.octavia', 'minute') | int >= 30) %}
+           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int, state_attr('input_datetime.octavia', 'minute') | int -30) }}
+         {% else %}
+           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -1, state_attr('input_datetime.octavia', 'minute') | int +30) }}
+         {% endif %}"
+      octavia_10:
+        value_template:   
+           "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -1, state_attr('input_datetime.octavia', 'minute') | int) }}"
+      octavia_20:
+        value_template:   
+           "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -2, state_attr('input_datetime.octavia', 'minute') | int) }}"
+      octavia_s:
+        value_template:   
+           "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int +1, state_attr('input_datetime.octavia', 'minute') | int) }}"
