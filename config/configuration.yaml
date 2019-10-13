@@ -46,8 +46,7 @@ climate:
   - platform: panasonic_ac
     username: !secret pana_user
     password: !secret pana_password
-
-
+    
 # Sensors
 sensor: !include sensors.yaml
 binary_sensor: !include binarysensors.yaml
@@ -63,8 +62,6 @@ notify:
   - name: telegram
     platform: telegram
     chat_id: !secret telegram_chat1
-  - name: android
-    platform: fcm-android
 
 input_boolean:
   golf:

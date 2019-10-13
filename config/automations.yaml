@@ -19,6 +19,24 @@
   action:
     - service: switch.turn_off
       entity_id: switch.tradfri_outlet
+# Outlet on when phone needs power
+- alias: 'Pistorasia päälle kun akku on tyhja'
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.puhelin1
+      below: 90
+  action:
+    service: switch.turn_on
+    entity_id: switch.tradfri_outlet_2
+#Outlet off when phone is charged
+- alias: 'Valot pois kello 23:10'
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.puhelin1
+      above: 99
+  action:
+    - service: switch.turn_off
+      entity_id: switch.tradfri_outlet_2
 # Heat pump to fan only when fireplace is hot
 - alias: 'Puhallus päälle kun takka on päällä'
   trigger:
@@ -115,7 +133,7 @@
           state: 'on'
         - condition: numeric_state
           entity_id: sensor.autotalli_temperature
-          below: 35
+          below: 5
         - condition: state
           entity_id: input_boolean.golf
           state: 'on'
@@ -126,7 +144,7 @@
           state: 'on'
         - condition: numeric_state
           entity_id: sensor.autotalli_temperature
-          below: 35 
+          below: -10
         - condition: state
           entity_id: input_boolean.golf
           state: 'on'
@@ -195,7 +213,7 @@
           state: 'on'
         - condition: numeric_state
           entity_id: sensor.autotalli_temperature
-          below: 35
+          below: 5
         - condition: state
           entity_id: input_boolean.octavia
           state: 'on'
@@ -206,7 +224,7 @@
           state: 'on'
         - condition: numeric_state
           entity_id: sensor.autotalli_temperature
-          below: 35
+          below: -10
         - condition: state
           entity_id: input_boolean.octavia
           state: 'on'
