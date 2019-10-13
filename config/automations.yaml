@@ -4,27 +4,29 @@
     - platform: sun
       event: sunset
       offset: '-00:30:00'
-  condition:
-    - condition: time
-      after: '14:00:00'
-      before: '22:30:00'
+    - platform: time
+      at: 6:30
   action:
     service: switch.turn_on
-    entity_id: switch.tradfri_outlet
-#Lights off at 23:00
+    entity_id: switch.tradfri_outlet_5
+#Lights off at 23:10
 - alias: 'Valot pois kello 23:10'
   trigger:
     - platform: time
       at: '23:10'
+    - platform: time
+      at: '9:00'
   action:
     - service: switch.turn_off
-      entity_id: switch.tradfri_outlet
+      entity_id: switch.tradfri_outlet_5
 # Outlet on when phone needs power
 - alias: 'Pistorasia päälle kun akku on tyhja'
   trigger:
     - platform: numeric_state
       entity_id: sensor.puhelin1
       below: 90
+    - platform: time
+      at: '22:00'
   action:
     service: switch.turn_on
     entity_id: switch.tradfri_outlet_2
