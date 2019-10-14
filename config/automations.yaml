@@ -21,6 +21,7 @@
       entity_id: switch.tradfri_outlet_5
 # Night lights on before bedtime
 - alias: 'Valot päälle ennen nukkumaan menoa'
+  trigger:
     - platform: time
       at: '18:30'
   action:
