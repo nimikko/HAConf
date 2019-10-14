@@ -10,7 +10,7 @@
     service: switch.turn_on
     entity_id: switch.tradfri_outlet_5
 #Lights off at 23:10
-- alias: 'Valot pois kello 23:10'
+- alias: 'Valot pois klo 23 ja aamulla klo 9'
   trigger:
     - platform: time
       at: '23:10'
@@ -19,6 +19,21 @@
   action:
     - service: switch.turn_off
       entity_id: switch.tradfri_outlet_5
+# Night lights on before bedtime
+- alias: 'Valot päälle ennen nukkumaan menoa'
+    - platform: time
+      at: '18:30'
+  action:
+    service: switch.turn_on
+    entity_id: switch.tradfri_outlet
+#Night lights off at 8:30
+- alias: 'Yövalot pois aamulla klo 8:30'
+  trigger:
+    - platform: time
+      at: '8:30'
+  action:
+    - service: switch.turn_off
+      entity_id: switch.tradfri_outlet
 # Outlet on when phone needs power
 - alias: 'Pistorasia päälle kun akku on tyhja'
   trigger:
@@ -31,7 +46,7 @@
     service: switch.turn_on
     entity_id: switch.tradfri_outlet_2
 #Outlet off when phone is charged
-- alias: 'Valot pois kello 23:10'
+- alias: 'Pistorasia pois kun akku täynnä'
   trigger:
     - platform: numeric_state
       entity_id: sensor.puhelin1
