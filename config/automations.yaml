@@ -1,5 +1,5 @@
 # Lights on before sunset
-- alias: 'Valot päälle tuntia ennen aurinkolaskua'
+- alias: 'Valot päälle puoli tuntia ennen aurinkolaskua'
   trigger:
     - platform: sun
       event: sunset
@@ -8,7 +8,7 @@
       at: '6:30'
   action:
     service: switch.turn_on
-    entity_id: switch.tradfri_outlet_5
+    entity_id: group.koristevalot
 #Lights off at 23:10
 - alias: 'Valot pois klo 23 ja aamulla klo 9'
   trigger:
@@ -18,7 +18,7 @@
       at: '9:00'
   action:
     - service: switch.turn_off
-      entity_id: switch.tradfri_outlet_5
+      entity_id: group.koristevalot
 # Night lights on before bedtime
 - alias: 'Valot päälle ennen nukkumaan menoa'
   trigger:

@@ -1,0 +1,6 @@
+koristevalot:
+  name: Koristevalot
+  entities:
+    - switch.tradfri_outlet_5
+    - switch.tradfri_outlet_4
+    - switch.tradfri_outlet_3
