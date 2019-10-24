@@ -62,7 +62,24 @@ notify:
   - name: telegram
     platform: telegram
     chat_id: !secret telegram_chat1
-
+  
+cover:
+  - platform: mqtt
+    name: "Autotallin ovi"
+    state_topic: "garage/door/1/status"
+    command_topic: "garage/door/1/action"
+    availability_topic: "GarHAge/availability"
+    qos: 0
+    optimistic: false
+    retain: false
+    payload_open: "OPEN"
+    payload_close: "CLOSE"
+    payload_stop: "STATE"
+    state_open: "open"
+    state_closed: "closed"
+    payload_available: "online"
+    payload_not_available: "offline"
+    
 input_boolean:
   golf:
     name: Golf automaatti

@@ -24,3 +24,39 @@
       octavia_sb:
         value_template: "{{ is_state('sensor.octavia_s',states('sensor.time')|string) }}"
         entity_id: sensor.time
+  
+  - platform: mqtt
+    name: "Autotallin ovi"
+    state_topic: "garage/door/1/status"
+    payload_on: "open"
+    payload_off: "closed"
+    availability_topic: "GarHAge/availability"
+    device_class: opening
+    qos: 0
+
+  - platform: mqtt
+    name: "Sivuovi"
+    state_topic: "garage/door/2/status"
+    payload_on: "open"
+    payload_off: "closed"
+    availability_topic: "GarHAge/availability"
+    device_class: opening
+    qos: 0  
+    
+  - platform: mqtt
+    name: "Kylmavarasto"
+    state_topic: "garage/door/3/status"
+    payload_on: "open"
+    payload_off: "closed"
+    availability_topic: "GarHAge/availability"
+    device_class: opening
+    qos: 0  
+  
+  - platform: mqtt
+    name: "Puutarhavarasto"
+    state_topic: "garage/door/4/status"
+    payload_on: "open"
+    payload_off: "closed"
+    availability_topic: "GarHAge/availability"
+    device_class: opening
+    qos: 0  
