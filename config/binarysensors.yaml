@@ -31,7 +31,7 @@
     payload_on: "open"
     payload_off: "closed"
     availability_topic: "GarHAge/availability"
-    device_class: opening
+    device_class: garage_door
     qos: 0
 
   - platform: mqtt
@@ -40,7 +40,7 @@
     payload_on: "open"
     payload_off: "closed"
     availability_topic: "GarHAge/availability"
-    device_class: opening
+    device_class: door
     qos: 0  
     
   - platform: mqtt
@@ -49,7 +49,7 @@
     payload_on: "open"
     payload_off: "closed"
     availability_topic: "GarHAge/availability"
-    device_class: opening
+    device_class: door
     qos: 0  
   
   - platform: mqtt
@@ -58,5 +58,5 @@
     payload_on: "open"
     payload_off: "closed"
     availability_topic: "GarHAge/availability"
-    device_class: opening
+    device_class: door
     qos: 0  

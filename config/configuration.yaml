@@ -79,7 +79,37 @@ cover:
     state_closed: "closed"
     payload_available: "online"
     payload_not_available: "offline"
-    
+    device_class: garage
+light:
+  - platform: group
+    name: Olohuone pienet valot
+    entities:
+     - light.tradfri_bulb_6
+     - light.tradfri_bulb_7
+  - platform: group
+    name: Olohuone isot valot
+    entities:
+     - light.tradfri_bulb_2
+     - light.tradfri_bulb_3
+     - light.tradfri_bulb_4
+     - light.tradfri_bulb_5
+  - platform: group
+    name: Olohuone ovien valot
+    entities:
+     - light.tradfri_door
+     - light.tradfri_door_2
+  - platform: group
+    name: Olohuone kaikki valot
+    entities:
+     - light.tradfri_bulb_2
+     - light.tradfri_bulb_3
+     - light.tradfri_bulb_4
+     - light.tradfri_bulb_5
+     - light.tradfri_bulb_6
+     - light.tradfri_bulb_7
+     - light.tradfri_door
+     - light.tradfri_door_2
+
 input_boolean:
   golf:
     name: Golf automaatti

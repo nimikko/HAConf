@@ -4,3 +4,38 @@ koristevalot:
     - switch.tradfri_outlet_5
     - switch.tradfri_outlet_4
     - switch.tradfri_outlet_3
+autotallinovet:
+  name: Autotallin ovet
+  entities:
+     - binary_sensor.puutarhavarasto
+     - binary_sensor.sivuovi
+     - binary_sensor.kylmavarasto
+     - binary_sensor.autotallin_ovi
+olohuone_pienet:
+  name: Pienet valot
+  entities:
+     - light.tradfri_bulb_6
+     - light.tradfri_bulb_7
+olohuone_isot:
+  name: Isot valot
+  entities:
+     - light.tradfri_bulb_2
+     - light.tradfri_bulb_3
+     - light.tradfri_bulb_4
+     - light.tradfri_bulb_5
+olohuone_ovet:
+  name: Ovien valot
+  entities:
+     - light.tradfri_door
+     - light.tradfri_door_2
+olohuone_kaikki:
+  name: Kaikki valot
+  entities:
+     - light.tradfri_bulb_2
+     - light.tradfri_bulb_3
+     - light.tradfri_bulb_4
+     - light.tradfri_bulb_5
+     - light.tradfri_bulb_6
+     - light.tradfri_bulb_7
+     - light.tradfri_door
+     - light.tradfri_door_2
