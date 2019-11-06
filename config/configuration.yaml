@@ -32,7 +32,6 @@ homeassistant:
 default_config:
 
 
-
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
   base_url: !secret url
@@ -121,6 +120,10 @@ input_boolean:
   octavia_s:
   pumppu:
     name: Uima-allas pumppu
+  zigbee_permit_join:
+    name: Allow devices to join
+    initial: off
+    icon: mdi:cellphone-wireless
 input_datetime:
   golf:
     name: Golf lämmitys aika
@@ -130,7 +133,11 @@ input_datetime:
     name: Octavia lämmitys aika
     has_date: false
     has_time: true
-   
+
+timer:
+  zigbee_permit_join:
+    name: Time remaining
+    duration: 600 # Updated this to the number of seconds you wish
 # Text to speech
 tts:
   - platform: google_translate

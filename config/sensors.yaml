@@ -56,3 +56,7 @@
       puhelin1:
         value_template: !secret puhelin1
         unit_of_measurement: '%'
+  - platform: mqtt
+    name: Bridge state
+    state_topic: "zigbee2mqtt/bridge/state"
+    icon: mdi:router-wireless

@@ -1,9 +1,10 @@
 # Lights on before sunset
 - alias: 'Valot päälle puoli tuntia ennen aurinkolaskua'
   trigger:
-    - platform: sun
-      event: sunset
-      offset: '-00:30:00'
+    - platform: numeric_state
+      entity_id: sun.sun
+      value_template: "{{ state.attributes.elevation }}"
+      below: 0
     - platform: time
       at: '6:30'
   action:
@@ -14,8 +15,10 @@
   trigger:
     - platform: time
       at: '23:10'
-    - platform: time
-      at: '9:00'
+    - platform: numeric_state
+      entity_id: sun.sun
+      value_template: "{{ state.attributes.elevation }}"
+      above: 0
   action:
     - service: switch.turn_off
       entity_id: group.koristevalot
@@ -66,6 +69,7 @@
       data:
         entity_id: climate.pumppu
         hvac_mode: fan_only
+        fan_mode: LowMid
 # Heat pump back to heating  when fireplace is cold
 - alias: 'Puhallus pois kun takka on kylmä'
   trigger:
@@ -83,6 +87,7 @@
       data:
         entity_id: climate.pumppu
         hvac_mode: heat     
+        fan_mode: Auto
 # Pool pump on when the solar panel is warmer than pool
 - alias: 'Aurinkokenno on lämmin'
   trigger:
@@ -325,3 +330,49 @@
         hvac_mode: cool   
     - service: climate.turn_off
       entity_id: climate.pumppu
+- id: enable_zigbee_join
+  alias: Enable Zigbee joining
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.zigbee_permit_join
+    to: 'on'
+  action:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/config/permit_join
+      payload: 'true'
+  - service: timer.start
+    data:
+      entity_id: timer.zigbee_permit_join
+- id: disable_zigbee_join
+  alias: Disable Zigbee joining
+  trigger:
+  - entity_id: input_boolean.zigbee_permit_join
+    platform: state
+    to: 'off'
+  action:
+  - data:
+      payload: 'false'
+      topic: zigbee2mqtt/bridge/config/permit_join
+    service: mqtt.publish
+  - data:
+      entity_id: timer.zigbee_permit_join
+    service: timer.cancel
+  hide_entity: true
+- id: disable_zigbee_join_timer
+  alias: Disable Zigbee joining by timer
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.zigbee_permit_join
+  action:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/config/permit_join
+      payload: 'false'
+  - service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.zigbee_permit_join
