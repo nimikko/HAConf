@@ -1,5 +1,6 @@
 # Lights on before sunset
-- alias: 'Valot päälle puoli tuntia ennen aurinkolaskua'
+- id: decoration_ligths_on
+  alias: 'Valot päälle ennen aurinkolaskua'
   trigger:
     - platform: numeric_state
       entity_id: sun.sun
@@ -11,7 +12,8 @@
     service: switch.turn_on
     entity_id: group.koristevalot
 #Lights off at 23:10
-- alias: 'Valot pois klo 23 ja aamulla klo 9'
+- id: decoration_ligths_off
+  alias: 'Valot pois klo 23 ja aamulla kun aurinko on noussut'
   trigger:
     - platform: time
       at: '23:10'
@@ -23,7 +25,8 @@
     - service: switch.turn_off
       entity_id: group.koristevalot
 # Night lights on before bedtime
-- alias: 'Valot päälle ennen nukkumaan menoa'
+- id: night_lights_on
+  alias: 'Yövalot päälle ennen nukkumaan menoa'
   trigger:
     - platform: time
       at: '18:30'
@@ -31,7 +34,8 @@
     service: switch.turn_on
     entity_id: switch.tradfri_outlet
 #Night lights off at 8:30
-- alias: 'Yövalot pois aamulla klo 8:30'
+- id: night_lights_off
+  alias: 'Yövalot pois aamulla klo 8:30'
   trigger:
     - platform: time
       at: '8:30'
@@ -39,7 +43,8 @@
     - service: switch.turn_off
       entity_id: switch.tradfri_outlet
 # Outlet on when phone needs power
-- alias: 'Pistorasia päälle kun akku on tyhja'
+- id: phone_outlet_on
+  alias: 'Pistorasia päälle kun akku on tyhja'
   trigger:
     - platform: numeric_state
       entity_id: sensor.puhelin1
@@ -50,7 +55,8 @@
     service: switch.turn_on
     entity_id: switch.tradfri_outlet_2
 #Outlet off when phone is charged
-- alias: 'Pistorasia pois kun akku täynnä'
+- id: phone_outlet_off
+  alias: 'Pistorasia pois kun akku täynnä'
   trigger:
     - platform: numeric_state
       entity_id: sensor.puhelin1
@@ -59,7 +65,8 @@
     - service: switch.turn_off
       entity_id: switch.tradfri_outlet_2
 # Heat pump to fan only when fireplace is hot
-- alias: 'Puhallus päälle kun takka on päällä'
+- id: fireplace_fan_on  
+  alias: 'Puhallus päälle kun takka on päällä'
   trigger:
     - platform: numeric_state
       entity_id: sensor.takka_temperature
@@ -69,9 +76,13 @@
       data:
         entity_id: climate.pumppu
         hvac_mode: fan_only
+    - service: climate.set_fan_mode
+      data:
+        entity_id: climate.pumppu
         fan_mode: LowMid
 # Heat pump back to heating  when fireplace is cold
-- alias: 'Puhallus pois kun takka on kylmä'
+- id: fireplace_fan_off  
+  alias: 'Puhallus pois kun takka on kylmä'
   trigger:
     - platform: numeric_state
       entity_id: sensor.takka_temperature
@@ -87,9 +98,13 @@
       data:
         entity_id: climate.pumppu
         hvac_mode: heat     
+    - service: climate.set_fan_mode
+      data:
+        entity_id: climate.pumppu
         fan_mode: Auto
 # Pool pump on when the solar panel is warmer than pool
-- alias: 'Aurinkokenno on lämmin'
+- id: pool_heating_on
+  alias: 'Aurinkokenno on lämmin'
   trigger:
     - platform: template
       value_template: "{{ states('sensor.aurinkenno_temperature')|float +1 > states('sensor.uima_allas_temperature')|float }}"
@@ -112,7 +127,8 @@
         target: !secret telegram_chat3
         message: "Aurinkokenno on {{ states('sensor.aurinkenno_temperature') }} ja uima-allas {{ states('sensor.uima_allas_temperature') }}"
 # Pool pump off when it starts to cool the pool
-- alias: 'Aurinkokenno jäähdyttää'
+- id: pool_heating_off
+  alias: 'Aurinkokenno jäähdyttää'
   trigger:
     - platform: template
       value_template: "{{ states('sensor.uima_allas_tulo_temperature')|float < states('sensor.uima_allas_temperature')|float }}"
@@ -135,7 +151,8 @@
         target: !secret telegram_chat3
         message: "Tulo on {{ states('sensor.uima_allas_tulo_temperature') }} ja uima-allas {{ states('sensor.uima_allas_temperature') }}"
 # Car heating at the requested time if the garage is cold
-- alias: 'Golf lämmitys'
+- id: golf_heating_on
+  alias: 'Golf lämmitys'
   trigger:
     - platform: state
       entity_id: binary_sensor.golf_0b
@@ -194,8 +211,9 @@
       entity_id: input_boolean.golf
     - service: input_boolean.turn_on
       entity_id: input_boolean.golf_s
-# Turning off car heating after hour of requested time
-- alias: 'Golf lämmitys pois'
+# Turning off car heating after half an hour of requested time
+- id: golf_heating_off
+  alias: 'Golf lämmitys pois'
   trigger:
     - platform: state
       entity_id: binary_sensor.golf_sb
@@ -215,7 +233,8 @@
         target: !secret telegram_chat3
         message: "Pyydetty lämmitysaika oli:  {{ states('input_datetime.golf') }} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
 # Car heating at the requested time if the garage is cold
-- alias: 'Octavia lämmitys'
+- id: ocatavia_heating_on
+  alias: 'Octavia lämmitys'
   trigger:
     - platform: state
       entity_id: binary_sensor.octavia_0b
@@ -274,8 +293,9 @@
       entity_id: input_boolean.octavia
     - service: input_boolean.turn_on
       entity_id: input_boolean.octavia_s
-# Turning off car heating after hour of requested time
-- alias: 'Octavia lämmitys pois'
+# Turning off car heating after half an hour of requested time
+- id: ocatavia_heating_off
+  alias: 'Octavia lämmitys pois'
   trigger:
     - platform: state
       entity_id: binary_sensor.octavia_sb
@@ -295,7 +315,8 @@
         target: !secret telegram_chat3
         message: "Pyydetty lämmitysaika oli:  {{ states('input_datetime.octavia') }} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
 # Heat pump to cooling on evening
-- alias: 'Pumppu viilennykselle illalle'
+- id: heatpump_to_cooling_evening
+  alias: 'Pumppu viilennykselle illalle'
   trigger:
     - platform: time
       at: '23:10'
@@ -315,7 +336,8 @@
         entity_id: climate.pumppu
         hvac_mode: cool
 #Heat pump off on the morning
-- alias: 'Pumppu  pois aamulla'
+- id: heatpump_off_morning
+  alias: 'Pumppu  pois aamulla'
   trigger:
     - platform: time
       at: '6:00'
@@ -376,3 +398,24 @@
   - service: input_boolean.turn_off
     data:
       entity_id: input_boolean.zigbee_permit_join
+#Check taht garage doors are closed
+- id: garage_doors_check
+  alias: Tarkista autotallin ovet
+  trigger:
+    platform: time
+    at: '21:00'
+  condition:
+    condition: template
+    value_template: > 
+      {{ states | selectattr('entity_id', 'in', state_attr('group.autotallinovet','entity_id')) | selectattr('state','in',['on','open']) | list | length >= 1 }}
+  action:
+    - service: telegram_bot.send_message
+      data_template:
+        title: '*Autotallin ovet on auki*'
+        target: !secret telegram_chat3
+        message: "{% set open_doors = states | selectattr('entity_id', 'in', state_attr('group.autotallinovet','entity_id')) | selectattr('state','in',['on','open']) | map(attribute='name') | list %}
+          {% if open_doors | length == 1 %}
+            {{ open_doors[0] }} on auki.
+          {% else %}
+            {{ open_doors[:-1] | join(', ') }}{{'' if open_doors | length > 2 else ' '}} ja {{ open_doors[-1]}} on auki.
+          {% endif %}"
