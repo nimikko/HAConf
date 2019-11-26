@@ -163,9 +163,20 @@
     - platform: state
       entity_id: binary_sensor.golf_20b
       to: 'on'
+    - platform: state
+      entity_id: switch.golf
+      to: 'on'
   condition:
     condition: or
     conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.golf
+          state: 'on'
+        - condition: state
+          entity_id: timer.golf
+          state: 'idle'
       - condition: and
         conditions:    
         - condition: state
@@ -202,31 +213,29 @@
   action:
     - service: switch.turn_on
       entity_id: switch.golf
+    - service: script.turn_on
+      entity_id: script.autojen_lammitys
+      data:
+        variables:
+          car: 'timer.golf'
     - service: telegram_bot.send_message
       data_template:
         title: '*Golf lämmitys päälle*'
         target: !secret telegram_chat3
-        message: "Pyydetty lämmitysaika:  {{ states('input_datetime.golf') }} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
+        message: "Pyydetty lämmitysaika:  {% if is_state('input_boolean.golf', 'on')  -%}{{ states('input_datetime.golf') }} {%- else -%}Käynnistetty käsin{%- endif %} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
     - service:  input_boolean.turn_off
       entity_id: input_boolean.golf
-    - service: input_boolean.turn_on
-      entity_id: input_boolean.golf_s
 # Turning off car heating after half an hour of requested time
 - id: golf_heating_off
   alias: 'Golf lämmitys pois'
   trigger:
-    - platform: state
-      entity_id: binary_sensor.golf_sb
-      to: 'on'
-  condition:
-    - condition: state
-      entity_id: input_boolean.golf_s
-      state: 'on'
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.golf
   action:
     - service: switch.turn_off
       entity_id: switch.golf
-    - service: input_boolean.turn_off
-      entity_id: input_boolean.golf_s
     - service: telegram_bot.send_message
       data_template:
         title: '*Golf lämmitys pois*'
@@ -245,9 +254,20 @@
     - platform: state
       entity_id: binary_sensor.octavia_20b
       to: 'on'
+    - platform: state
+      entity_id: switch.octavia
+      to: 'on'
   condition:
     condition: or
     conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.octavia
+          state: 'on'
+        - condition: state
+          entity_id: timer.octavia
+          state: 'idle'
       - condition: and
         conditions:    
         - condition: state
@@ -284,31 +304,29 @@
   action:
     - service: switch.turn_on
       entity_id: switch.octavia
+    - service: script.turn_on
+      entity_id: script.autojen_lammitys
+      data:
+        variables:
+          car: 'timer.octavia'
     - service: telegram_bot.send_message
       data_template:
         title: '*Octavia lämmitys päälle*'
         target: !secret telegram_chat3
-        message: "Pyydetty lämmitysaika:  {{ states('input_datetime.octavia') }} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
+        message: "Pyydetty lämmitysaika:  {% if is_state('input_boolean.octavia', 'on')  -%}{{ states('input_datetime.octavia') }} {%- else -%}Käynnistetty käsin{%- endif %} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
     - service:  input_boolean.turn_off
       entity_id: input_boolean.octavia
-    - service: input_boolean.turn_on
-      entity_id: input_boolean.octavia_s
 # Turning off car heating after half an hour of requested time
 - id: ocatavia_heating_off
   alias: 'Octavia lämmitys pois'
   trigger:
-    - platform: state
-      entity_id: binary_sensor.octavia_sb
-      to: 'on'
-  condition:
-    - condition: state
-      entity_id: input_boolean.octavia_s
-      state: 'on'
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.octavia
   action:
     - service: switch.turn_off
       entity_id: switch.octavia
-    - service: input_boolean.turn_off
-      entity_id: input_boolean.octavia_s
     - service: telegram_bot.send_message
       data_template:
         title: '*Octavia lämmitys pois*'

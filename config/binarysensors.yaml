@@ -9,9 +9,6 @@
       golf_20b:
         value_template: "{{ is_state('sensor.golf_20',states('sensor.time')|string) }}"
         entity_id: sensor.time
-      golf_sb:
-        value_template: "{{ is_state('sensor.golf_s',states('sensor.time')|string) }}"
-        entity_id: sensor.time
       octavia_0b:
         value_template: "{{ is_state('sensor.octavia_0',states('sensor.time')|string) }}"
         entity_id: sensor.time
@@ -20,9 +17,6 @@
         entity_id: sensor.time
       octavia_20b:
         value_template: "{{ is_state('sensor.octavia_20',states('sensor.time')|string) }}"
-        entity_id: sensor.time
-      octavia_sb:
-        value_template: "{{ is_state('sensor.octavia_s',states('sensor.time')|string) }}"
         entity_id: sensor.time
   
   - platform: mqtt

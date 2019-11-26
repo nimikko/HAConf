@@ -26,13 +26,6 @@
       golf_20:
         value_template:   
            "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -2, state_attr('input_datetime.golf', 'minute') | int) }}"
-      golf_s:
-        value_template:   
-          "{%if (state_attr('input_datetime.golf', 'minute') | int < 30) %}
-           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int, state_attr('input_datetime.golf', 'minute') | int +30) }}
-         {% else %}
-           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int +1, state_attr('input_datetime.golf', 'minute') | int -30) }}
-         {% endif %}"
       octavia_0:
         value_template:
           "{%if (state_attr('input_datetime.octavia', 'minute') | int >= 30) %}
@@ -46,13 +39,6 @@
       octavia_20:
         value_template:   
            "{{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -2, state_attr('input_datetime.octavia', 'minute') | int) }}"
-      octavia_s:
-        value_template:   
-           "{%if (state_attr('input_datetime.octavia', 'minute') | int < 30) %}
-           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int, state_attr('input_datetime.octavia', 'minute') | int +30) }}
-         {% else %}
-           {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int +1, state_attr('input_datetime.octavia', 'minute') | int -30) }}
-         {% endif %}"
       puhelin1:
         value_template: !secret puhelin1
         unit_of_measurement: '%'
