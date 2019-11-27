@@ -24,6 +24,32 @@
   action:
     - service: switch.turn_off
       entity_id: group.koristevalot
+# Lights on before sunset
+- id: decoration_ligths_tree_on
+  alias: 'Valot päälle ennen aurinkolaskua'
+  trigger:
+    - platform: numeric_state
+      entity_id: sun.sun
+      value_template: "{{ state.attributes.elevation }}"
+      below: 0
+    - platform: time
+      at: '7:30'
+  action:
+    service: switch.turn_on
+    entity_id: switch.tradfri_outlet_7
+#Lights off at 23:10
+- id: decoration_ligths_tree_off
+  alias: 'Kuusen valot pois klo 19:50 ja aamulla kun aurinko on noussut'
+  trigger:
+    - platform: time
+      at: '19:50'
+    - platform: numeric_state
+      entity_id: sun.sun
+      value_template: "{{ state.attributes.elevation }}"
+      above: 0
+  action:
+    - service: switch.turn_off
+      entity_id: switch.tradfri_outlet_7
 # Night lights on before bedtime
 - id: night_lights_on
   alias: 'Yövalot päälle ennen nukkumaan menoa'
