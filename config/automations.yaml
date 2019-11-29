@@ -17,16 +17,16 @@
   trigger:
     - platform: time
       at: '23:10'
-    - platform: numeric_state
-      entity_id: sun.sun
-      value_template: "{{ state.attributes.elevation }}"
-      above: 0
+#    - platform: numeric_state
+#      entity_id: sun.sun
+#      value_template: "{{ state.attributes.elevation }}"
+#      above: 0
   action:
     - service: switch.turn_off
       entity_id: group.koristevalot
 # Lights on before sunset
 - id: decoration_ligths_tree_on
-  alias: 'Valot päälle ennen aurinkolaskua'
+  alias: 'Kuusen valot päälle ennen aurinkolaskua'
   trigger:
     - platform: numeric_state
       entity_id: sun.sun
@@ -43,10 +43,10 @@
   trigger:
     - platform: time
       at: '19:50'
-    - platform: numeric_state
-      entity_id: sun.sun
-      value_template: "{{ state.attributes.elevation }}"
-      above: 0
+#    - platform: numeric_state
+#      entity_id: sun.sun
+#      value_template: "{{ state.attributes.elevation }}"
+#      above: 0
   action:
     - service: switch.turn_off
       entity_id: switch.tradfri_outlet_7
