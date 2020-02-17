@@ -1,401 +1,390 @@
-# Lights on before sunset
 - id: decoration_ligths_on
-  alias: 'Valot päälle ennen aurinkolaskua'
+  alias: Valot päälle ennen aurinkolaskua
   trigger:
-    - platform: numeric_state
-      entity_id: sun.sun
-      value_template: "{{ state.attributes.elevation }}"
-      below: 0
-    - platform: time
-      at: '6:30'
+  - platform: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 0
+  - platform: time
+    at: '6:30'
   action:
     service: switch.turn_on
     entity_id: group.koristevalot
-#Lights off at 23:10
 - id: decoration_ligths_off
-  alias: 'Valot pois klo 23 ja aamulla kun aurinko on noussut'
+  alias: Valot pois klo 23 ja aamulla kun aurinko on noussut
   trigger:
-    - platform: time
-      at: '23:10'
-#    - platform: numeric_state
-#      entity_id: sun.sun
-#      value_template: "{{ state.attributes.elevation }}"
-#      above: 0
+  - platform: time
+    at: '23:10'
+  - platform: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    above: 0
   action:
-    - service: switch.turn_off
-      entity_id: group.koristevalot
-# Lights on before sunset
+  - service: switch.turn_off
+    entity_id: group.koristevalot
 - id: decoration_ligths_tree_on
-  alias: 'Kuusen valot päälle ennen aurinkolaskua'
+  alias: Kuusen valot päälle ennen aurinkolaskua
   trigger:
-    - platform: numeric_state
-      entity_id: sun.sun
-      value_template: "{{ state.attributes.elevation }}"
-      below: 0
-    - platform: time
-      at: '7:30'
+  - platform: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 0
+  - platform: time
+    at: '8:30'
+  condition:
+  - condition: time
+    after: '7:20:00'
+    before: '19:40:00'
   action:
     service: switch.turn_on
     entity_id: switch.tradfri_outlet_7
-#Lights off at 23:10
 - id: decoration_ligths_tree_off
-  alias: 'Kuusen valot pois klo 19:50 ja aamulla kun aurinko on noussut'
+  alias: Kuusen valot pois klo 19:50 ja aamulla kun aurinko on noussut
   trigger:
-    - platform: time
-      at: '19:50'
-#    - platform: numeric_state
-#      entity_id: sun.sun
-#      value_template: "{{ state.attributes.elevation }}"
-#      above: 0
+  - platform: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    above: 0
+  - platform: time
+    at: '19:50'
   action:
-    - service: switch.turn_off
-      entity_id: switch.tradfri_outlet_7
-# Night lights on before bedtime
+  - service: switch.turn_off
+    entity_id: switch.tradfri_outlet_7
 - id: night_lights_on
-  alias: 'Yövalot päälle ennen nukkumaan menoa'
+  alias: Yövalot päälle ennen nukkumaan menoa
   trigger:
-    - platform: time
-      at: '18:30'
+  - platform: time
+    at: '18:30'
   action:
     service: switch.turn_on
     entity_id: switch.tradfri_outlet
-#Night lights off at 8:30
 - id: night_lights_off
-  alias: 'Yövalot pois aamulla klo 8:30'
+  alias: Yövalot pois aamulla klo 8:30
   trigger:
-    - platform: time
-      at: '8:30'
+  - platform: time
+    at: '8:30'
   action:
-    - service: switch.turn_off
-      entity_id: switch.tradfri_outlet
-# Outlet on when phone needs power
+  - service: switch.turn_off
+    entity_id: switch.tradfri_outlet
 - id: phone_outlet_on
-  alias: 'Pistorasia päälle kun akku on tyhja'
+  alias: Pistorasia päälle kun akku on tyhja
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.puhelin1
-      below: 90
-    - platform: time
-      at: '22:00'
+  - platform: numeric_state
+    entity_id: sensor.puhelin1
+    below: 90
+  - platform: time
+    at: '22:00'
   action:
     service: switch.turn_on
     entity_id: switch.tradfri_outlet_2
-#Outlet off when phone is charged
 - id: phone_outlet_off
-  alias: 'Pistorasia pois kun akku täynnä'
+  alias: Pistorasia pois kun akku täynnä
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.puhelin1
-      above: 99
+  - platform: numeric_state
+    entity_id: sensor.puhelin1
+    above: 99
   action:
-    - service: switch.turn_off
-      entity_id: switch.tradfri_outlet_2
-# Heat pump to fan only when fireplace is hot
-- id: fireplace_fan_on  
-  alias: 'Puhallus päälle kun takka on päällä'
+  - service: switch.turn_off
+    entity_id: switch.tradfri_outlet_2
+- id: fireplace_fan_on
+  alias: Puhallus päälle kun takka on päällä
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.takka_temperature
-      above: 35
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    above: 35
   action:
-    - service: climate.set_hvac_mode
-      data:
-        entity_id: climate.pumppu
-        hvac_mode: fan_only
-    - service: climate.set_fan_mode
-      data:
-        entity_id: climate.pumppu
-        fan_mode: LowMid
-# Heat pump back to heating  when fireplace is cold
-- id: fireplace_fan_off  
-  alias: 'Puhallus pois kun takka on kylmä'
-  trigger:
-    - platform: numeric_state
-      entity_id: sensor.takka_temperature
-      below: 45
-      for: 
-       minutes: 1
-  condition:
-    - condition: state
+  - service: climate.set_hvac_mode
+    data:
       entity_id: climate.pumppu
-      state: 'fan_only'
+      hvac_mode: fan_only
+  - service: climate.set_fan_mode
+    data:
+      entity_id: climate.pumppu
+      fan_mode: LowMid
+- id: fireplace_fan_off
+  alias: Puhallus pois kun takka on kylmä
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    below: 45
+    for:
+      minutes: 1
+  condition:
+  - condition: state
+    entity_id: climate.pumppu
+    state: fan_only
   action:
-    - service: climate.set_hvac_mode
-      data:
-        entity_id: climate.pumppu
-        hvac_mode: heat     
-    - service: climate.set_fan_mode
-      data:
-        entity_id: climate.pumppu
-        fan_mode: Auto
-# Pool pump on when the solar panel is warmer than pool
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: heat
+  - service: climate.set_fan_mode
+    data:
+      entity_id: climate.pumppu
+      fan_mode: Auto
 - id: pool_heating_on
-  alias: 'Aurinkokenno on lämmin'
+  alias: Aurinkokenno on lämmin
   trigger:
-    - platform: template
-      value_template: "{{ states('sensor.aurinkenno_temperature')|float +1 > states('sensor.uima_allas_temperature')|float }}"
+  - platform: template
+    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float
+      }}'
   condition:
-    - condition: time
-      after: '9:00:00'
-      before: '21:00:00'
-    - condition: state
-      entity_id: input_boolean.pumppu
-      state: 'off'
+  - condition: time
+    after: '9:00:00'
+    before: '21:00:00'
+  - condition: state
+    entity_id: input_boolean.pumppu
+    state: 'off'
   action:
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.pumppu
-    - service: switch.turn_on
-      entity_id: switch.patteri
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Uima-altaan pumppu päälle*'
-        target: !secret telegram_chat3
-        message: "Aurinkokenno on {{ states('sensor.aurinkenno_temperature') }} ja uima-allas {{ states('sensor.uima_allas_temperature') }}"
-# Pool pump off when it starts to cool the pool
+  - service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.pumppu
+  - service: switch.turn_on
+    entity_id: switch.patteri
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Uima-altaan pumppu päälle*'
+      target: -323043671
+      message: Aurinkokenno on {{ states('sensor.aurinkenno_temperature') }} ja uima-allas
+        {{ states('sensor.uima_allas_temperature') }}
 - id: pool_heating_off
-  alias: 'Aurinkokenno jäähdyttää'
+  alias: Aurinkokenno jäähdyttää
   trigger:
-    - platform: template
-      value_template: "{{ states('sensor.uima_allas_tulo_temperature')|float < states('sensor.uima_allas_temperature')|float }}"
+  - platform: template
+    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float
+      }}'
   condition:
-    - condition: time
-      after: '9:00:00'
-      before: '21:00:00'
-    - condition: state
+  - condition: time
+    after: '9:00:00'
+    before: '21:00:00'
+  - condition: state
+    entity_id: input_boolean.pumppu
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    data:
       entity_id: input_boolean.pumppu
-      state: 'on'
-  action:
-    - service: input_boolean.turn_off
-      data:
-        entity_id: input_boolean.pumppu
-    - service: switch.turn_off
-      entity_id: switch.patteri
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Uima-altaan pumppu pois päältä*'
-        target: !secret telegram_chat3
-        message: "Tulo on {{ states('sensor.uima_allas_tulo_temperature') }} ja uima-allas {{ states('sensor.uima_allas_temperature') }}"
-# Car heating at the requested time if the garage is cold
+  - service: switch.turn_off
+    entity_id: switch.patteri
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Uima-altaan pumppu pois päältä*'
+      target: -323043671
+      message: Tulo on {{ states('sensor.uima_allas_tulo_temperature') }} ja uima-allas
+        {{ states('sensor.uima_allas_temperature') }}
 - id: golf_heating_on
-  alias: 'Golf lämmitys'
+  alias: Golf lämmitys
   trigger:
-    - platform: state
-      entity_id: binary_sensor.golf_0b
-      to: 'on'
-    - platform: state
-      entity_id: binary_sensor.golf_10b
-      to: 'on'
-    - platform: state
-      entity_id: binary_sensor.golf_20b
-      to: 'on'
-    - platform: state
-      entity_id: switch.golf
-      to: 'on'
+  - platform: state
+    entity_id: binary_sensor.golf_0b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.golf_10b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.golf_20b
+    to: 'on'
+  - platform: state
+    entity_id: switch.golf
+    to: 'on'
   condition:
     condition: or
     conditions:
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id: switch.golf
-          state: 'on'
-        - condition: state
-          entity_id: timer.golf
-          state: 'idle'
-      - condition: and
-        conditions:    
-        - condition: state
-          entity_id: binary_sensor.golf_0b
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.autotalli_temperature
-          below: 5
-        - condition: state
-          entity_id: input_boolean.golf
-          state: 'on'
-      - condition: and
-        conditions:    
-        - condition: state
-          entity_id: binary_sensor.golf_10b
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.autotalli_temperature
-          below: -10
-        - condition: state
-          entity_id: input_boolean.golf
-          state: 'on'
-      - condition: and
-        conditions:    
-        - condition: state
-          entity_id: binary_sensor.golf_20b
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.autotalli_temperature
-          below: -20
-        - condition: state
-          entity_id: input_boolean.golf
-          state: 'on'
-  action:
-    - service: switch.turn_on
-      entity_id: switch.golf
-    - service: script.turn_on
-      entity_id: script.autojen_lammitys
-      data:
-        variables:
-          car: 'timer.golf'
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Golf lämmitys päälle*'
-        target: !secret telegram_chat3
-        message: "Pyydetty lämmitysaika:  {% if is_state('input_boolean.golf', 'on')  -%}{{ states('input_datetime.golf') }} {%- else -%}Käynnistetty käsin{%- endif %} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
-    - service:  input_boolean.turn_off
-      entity_id: input_boolean.golf
-# Turning off car heating after half an hour of requested time
-- id: golf_heating_off
-  alias: 'Golf lämmitys pois'
-  trigger:
-    - platform: event
-      event_type: timer.finished
-      event_data:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: switch.golf
+        state: 'on'
+      - condition: state
         entity_id: timer.golf
+        state: idle
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.golf_0b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: 10
+      - condition: state
+        entity_id: input_boolean.golf
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.golf_10b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -10
+      - condition: state
+        entity_id: input_boolean.golf
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.golf_20b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -20
+      - condition: state
+        entity_id: input_boolean.golf
+        state: 'on'
   action:
-    - service: switch.turn_off
-      entity_id: switch.golf
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Golf lämmitys pois*'
-        target: !secret telegram_chat3
-        message: "Pyydetty lämmitysaika oli:  {{ states('input_datetime.golf') }} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
-# Car heating at the requested time if the garage is cold
-- id: ocatavia_heating_on
-  alias: 'Octavia lämmitys'
+  - service: script.turn_on
+    entity_id: script.autojen_lammitys
+    data:
+      variables:
+        car: timer.golf
+  - service: switch.turn_on
+    entity_id: switch.golf
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Golf lämmitys päälle*'
+      target: -323043671
+      message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.golf'', ''on'')  -%}{{
+        states(''input_datetime.golf'') }} {%- else -%}Käynnistetty käsin{%- endif
+        %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.golf
+- id: golf_heating_off
+  alias: Golf lämmitys pois
   trigger:
-    - platform: state
-      entity_id: binary_sensor.octavia_0b
-      to: 'on'
-    - platform: state
-      entity_id: binary_sensor.octavia_10b
-      to: 'on'
-    - platform: state
-      entity_id: binary_sensor.octavia_20b
-      to: 'on'
-    - platform: state
-      entity_id: switch.octavia
-      to: 'on'
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.golf
+  action:
+  - service: switch.turn_off
+    entity_id: switch.golf
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Golf lämmitys pois*'
+      target: -323043671
+      message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.golf'') }}
+        autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
+- id: ocatavia_heating_on
+  alias: Octavia lämmitys
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.octavia_0b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.octavia_10b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.octavia_20b
+    to: 'on'
+  - platform: state
+    entity_id: switch.octavia
+    to: 'on'
   condition:
     condition: or
     conditions:
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id: switch.octavia
-          state: 'on'
-        - condition: state
-          entity_id: timer.octavia
-          state: 'idle'
-      - condition: and
-        conditions:    
-        - condition: state
-          entity_id: binary_sensor.octavia_0b
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.autotalli_temperature
-          below: 5
-        - condition: state
-          entity_id: input_boolean.octavia
-          state: 'on'
-      - condition: and
-        conditions:    
-        - condition: state
-          entity_id: binary_sensor.octavia_10b
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.autotalli_temperature
-          below: -10
-        - condition: state
-          entity_id: input_boolean.octavia
-          state: 'on'
-      - condition: and
-        conditions:    
-        - condition: state
-          entity_id: binary_sensor.octavia_20b
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.autotalli_temperature
-          below: -20
-        - condition: state
-          entity_id: input_boolean.octavia
-          state: 'on'
-  action:
-    - service: switch.turn_on
-      entity_id: switch.octavia
-    - service: script.turn_on
-      entity_id: script.autojen_lammitys
-      data:
-        variables:
-          car: 'timer.octavia'
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Octavia lämmitys päälle*'
-        target: !secret telegram_chat3
-        message: "Pyydetty lämmitysaika:  {% if is_state('input_boolean.octavia', 'on')  -%}{{ states('input_datetime.octavia') }} {%- else -%}Käynnistetty käsin{%- endif %} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
-    - service:  input_boolean.turn_off
-      entity_id: input_boolean.octavia
-# Turning off car heating after half an hour of requested time
-- id: ocatavia_heating_off
-  alias: 'Octavia lämmitys pois'
-  trigger:
-    - platform: event
-      event_type: timer.finished
-      event_data:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: switch.octavia
+        state: 'on'
+      - condition: state
         entity_id: timer.octavia
+        state: idle
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.octavia_0b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: 10
+      - condition: state
+        entity_id: input_boolean.octavia
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.octavia_10b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -10
+      - condition: state
+        entity_id: input_boolean.octavia
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.octavia_20b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -20
+      - condition: state
+        entity_id: input_boolean.octavia
+        state: 'on'
   action:
-    - service: switch.turn_off
-      entity_id: switch.octavia
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Octavia lämmitys pois*'
-        target: !secret telegram_chat3
-        message: "Pyydetty lämmitysaika oli:  {{ states('input_datetime.octavia') }} autotallin lämpötila on {{ states('sensor.autotalli_temperature') }}"
-# Heat pump to cooling on evening
+  - service: script.turn_on
+    entity_id: script.autojen_lammitys
+    data:
+      variables:
+        car: timer.octavia
+  - service: switch.turn_on
+    entity_id: switch.octavia
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Octavia lämmitys päälle*'
+      target: -323043671
+      message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.octavia'',
+        ''on'')  -%}{{ states(''input_datetime.octavia'') }} {%- else -%}Käynnistetty
+        käsin{%- endif %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'')
+        }}'
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.octavia
+- id: ocatavia_heating_off
+  alias: Octavia lämmitys pois
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.octavia
+  action:
+  - service: switch.turn_off
+    entity_id: switch.octavia
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Octavia lämmitys pois*'
+      target: -323043671
+      message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.octavia'')
+        }} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
 - id: heatpump_to_cooling_evening
-  alias: 'Pumppu viilennykselle illalle'
+  alias: Pumppu lämmitykselle aamulla
   trigger:
-    - platform: time
-      at: '23:10'
-  condition:
-    - condition: time
-      after: '21:00:00'
-      before: '23:30:00'
+  - platform: time
+    at: 05:30
   action:
-    - service: climate.turn_on
+  - service: climate.turn_on
+    entity_id: climate.pumppu
+  - service: climate.set_temperature
+    data:
       entity_id: climate.pumppu
-    - service: climate.set_temperature
-      data:
-        entity_id: climate.pumppu
-        temperature: 22
-    - service: climate.set_hvac_mode
-      data:
-        entity_id: climate.pumppu
-        hvac_mode: cool
-#Heat pump off on the morning
+      temperature: 21.5
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: heat
 - id: heatpump_off_morning
-  alias: 'Pumppu  pois aamulla'
+  alias: Pumppu  pois illalla
   trigger:
-    - platform: time
-      at: '6:00'
+  - platform: time
+    at: '23:50'
   action:
-    - service: climate.set_temperature
-      data:
-        entity_id: climate.pumppu
-        temperature: 23
-    - service: climate.set_hvac_mode
-      data:
-        entity_id: climate.pumppu
-        hvac_mode: cool   
-    - service: climate.turn_off
+  - service: climate.set_temperature
+    data:
       entity_id: climate.pumppu
+      temperature: 21.5
+  - service: climate.turn_off
+    entity_id: climate.pumppu
 - id: enable_zigbee_join
   alias: Enable Zigbee joining
   hide_entity: true
@@ -442,7 +431,6 @@
   - service: input_boolean.turn_off
     data:
       entity_id: input_boolean.zigbee_permit_join
-#Check taht garage doors are closed
 - id: garage_doors_check
   alias: Tarkista autotallin ovet
   trigger:
@@ -450,16 +438,41 @@
     at: '21:00'
   condition:
     condition: template
-    value_template: > 
-      {{ states | selectattr('entity_id', 'in', state_attr('group.autotallinovet','entity_id')) | selectattr('state','in',['on','open']) | list | length >= 1 }}
+    value_template: '{{ states | selectattr(''entity_id'', ''in'', state_attr(''group.autotallinovet'',''entity_id''))
+      | selectattr(''state'',''in'',[''on'',''open'']) | list | length >= 1 }}
+
+      '
   action:
-    - service: telegram_bot.send_message
-      data_template:
-        title: '*Autotallin ovet on auki*'
-        target: !secret telegram_chat3
-        message: "{% set open_doors = states | selectattr('entity_id', 'in', state_attr('group.autotallinovet','entity_id')) | selectattr('state','in',['on','open']) | map(attribute='name') | list %}
-          {% if open_doors | length == 1 %}
-            {{ open_doors[0] }} on auki.
-          {% else %}
-            {{ open_doors[:-1] | join(', ') }}{{'' if open_doors | length > 2 else ' '}} ja {{ open_doors[-1]}} on auki.
-          {% endif %}"
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Autotallin ovet on auki*'
+      target: -323043671
+      message: '{% set open_doors = states | selectattr(''entity_id'', ''in'', state_attr(''group.autotallinovet'',''entity_id''))
+        | selectattr(''state'',''in'',[''on'',''open'']) | map(attribute=''name'')
+        | list %} {% if open_doors | length == 1 %} {{ open_doors[0] }} on auki. {%
+        else %} {{ open_doors[:-1] | join('', '') }}{{'''' if open_doors | length
+        > 2 else '' ''}} ja {{ open_doors[-1]}} on auki. {% endif %}'
+- id: '1578153226703'
+  alias: Turn on lights xiaomi
+  description: ''
+  trigger:
+  - entity_id: sensor.0x00158d00039d636c_click
+    platform: state
+    to: 'single'
+  condition: []
+  action:
+  - service: switch.toggle
+    entity_id: group.koristevalot
+- id: '1578153226704'
+  alias: Turn off lights xiaomi
+  description: ''
+  trigger:
+  - entity_id: sensor.0x00158d00039d636c_click
+    platform: state
+    to: 'double'
+  condition: []
+  action:
+  - device_id: 4e61861de4194b31aad7585ffa068606
+    domain: light
+    entity_id: light.olohuone_kaikki_valot
+    type: toggle

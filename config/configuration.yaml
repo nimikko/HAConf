@@ -95,8 +95,8 @@ light:
   - platform: group
     name: Olohuone ovien valot
     entities:
-     - light.tradfri_door
-     - light.tradfri_door_2
+     - light.tradfri_door_2_2
+     - light.tradfri_door_3
   - platform: group
     name: Olohuone kaikki valot
     entities:
@@ -106,9 +106,36 @@ light:
      - light.tradfri_bulb_5
      - light.tradfri_bulb_6
      - light.tradfri_bulb_7
-     - light.tradfri_door
-     - light.tradfri_door_2
-
+     - light.tradfri_door_3
+     - light.tradfri_door_2_2    
+  - platform: group
+    name: Tyohuone kaikki valot
+    entities:
+     - light.tradfri_bulb_8
+     - light.tradfri_bulb_9
+     - light.tradfri_bulb_10
+     - light.tradfri_bulb_11
+     - light.tradfri_driver
+     - light.tradfri_driver_2
+     - light.tradfri_driver_3
+     - light.tradfri_driver_4
+  - platform: group
+    name: Tyohuone kattovalot
+    entities:
+     - light.tradfri_bulb_8
+     - light.tradfri_bulb_9
+     - light.tradfri_bulb_10
+     - light.tradfri_bulb_11
+  - platform: group
+    name: Tyohuone paneelit
+    entities:
+     - light.tradfri_driver_3
+     - light.tradfri_driver_4
+  - platform: group
+    name: Tyohuone lednauhat
+    entities:
+     - light.tradfri_driver
+     - light.tradfri_driver_2
 input_boolean:
   golf:
     name: Golf automaatti

@@ -1,6 +1,6 @@
 autojen_lammitys:
   description: 'Cars heating time'
-  alias: 'Autojen lämmitysaika'
+  alias: 'Autojen lammitysaika'
   fields:
     car:
       description: 'name of the car'
@@ -8,7 +8,7 @@ autojen_lammitys:
   sequence:
     - condition: numeric_state
       entity_id: sensor.autotalli_temperature
-      above: 5
+      below: 20
     - service: timer.start
       data_template:
         entity_id: "{{ car }}"

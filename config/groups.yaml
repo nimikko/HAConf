@@ -1,9 +1,15 @@
 koristevalot:
   name: Koristevalot
   entities:
+    - switch.tradfri_7e240952044000b9_65568
+    - switch.tradfri_7e240952044000b9_65567
     - switch.tradfri_outlet_5
     - switch.tradfri_outlet_4
     - switch.tradfri_outlet_3
+    - switch.tradfri_outlet_8
+    - switch.tradfri_7e240952044000b9_65562
+    - switch.joonaksen_vrivalot
+
 autotallinovet:
   name: Autotallin ovet
   entities:
