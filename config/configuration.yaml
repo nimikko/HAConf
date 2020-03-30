@@ -30,7 +30,8 @@ homeassistant:
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
-
+recorder:
+  db_url: !secret dburl
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
@@ -41,10 +42,19 @@ http:
 # Discover some devices automatically
 discovery:
 
-climate:
-  - platform: panasonic_ac
-    username: !secret pana_user
-    password: !secret pana_password
+scene:
+  - name: Evening
+    entities:
+      light.olohuone_isot_valot : off
+      light.olohuone_ovien_valot: off
+      light.olohuone_pienet_valot:
+        state: on
+        brightness: 50
+        color_temp: 420
+
+panasonic_ac:
+  username: !secret pana_user
+  password: !secret pana_password
     
 # Sensors
 sensor: !include sensors.yaml
@@ -83,15 +93,11 @@ light:
   - platform: group
     name: Olohuone pienet valot
     entities:
-     - light.tradfri_bulb_6
-     - light.tradfri_bulb_7
+     - light.olohuone_pieni
   - platform: group
     name: Olohuone isot valot
     entities:
-     - light.tradfri_bulb_2
-     - light.tradfri_bulb_3
-     - light.tradfri_bulb_4
-     - light.tradfri_bulb_5
+     - light.olohuone_iso
   - platform: group
     name: Olohuone ovien valot
     entities:
@@ -100,21 +106,12 @@ light:
   - platform: group
     name: Olohuone kaikki valot
     entities:
-     - light.tradfri_bulb_2
-     - light.tradfri_bulb_3
-     - light.tradfri_bulb_4
-     - light.tradfri_bulb_5
-     - light.tradfri_bulb_6
-     - light.tradfri_bulb_7
-     - light.tradfri_door_3
-     - light.tradfri_door_2_2    
+     - light.olohuone_iso
+     - light.olohuone_pieni
   - platform: group
     name: Tyohuone kaikki valot
     entities:
-     - light.tradfri_bulb_8
-     - light.tradfri_bulb_9
-     - light.tradfri_bulb_10
-     - light.tradfri_bulb_11
+     - light.tyohuone
      - light.tradfri_driver
      - light.tradfri_driver_2
      - light.tradfri_driver_3
@@ -122,10 +119,7 @@ light:
   - platform: group
     name: Tyohuone kattovalot
     entities:
-     - light.tradfri_bulb_8
-     - light.tradfri_bulb_9
-     - light.tradfri_bulb_10
-     - light.tradfri_bulb_11
+     - light.tyohuone
   - platform: group
     name: Tyohuone paneelit
     entities:
@@ -147,10 +141,6 @@ input_boolean:
   octavia_s:
   pumppu:
     name: Uima-allas pumppu
-  zigbee_permit_join:
-    name: Allow devices to join
-    initial: off
-    icon: mdi:cellphone-wireless
 input_datetime:
   golf:
     name: Golf lämmitys aika
@@ -162,13 +152,16 @@ input_datetime:
     has_time: true
 
 timer:
-  zigbee_permit_join:
-    name: Time remaining
-    duration: 600 # Updated this to the number of seconds you wish
   octavia:
     name: Octavia lämmitys jäljellä
   golf:
     name: Golf lämmitys jäljellä
+  wc:
+    name: Vessan valot
+    duration: '00:05:00'
+  leikkihuone:
+    name: Leikkihuoneen valot
+    duration: '00:15:00'
 # Text to speech
 tts:
   - platform: google_translate

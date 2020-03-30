@@ -5,8 +5,6 @@
     entity_id: sun.sun
     value_template: '{{ state.attributes.elevation }}'
     below: 0
-  - platform: time
-    at: '6:30'
   action:
     service: switch.turn_on
     entity_id: group.koristevalot
@@ -55,7 +53,7 @@
     at: '18:30'
   action:
     service: switch.turn_on
-    entity_id: switch.tradfri_outlet
+    entity_id: switch.makuuhuone
 - id: night_lights_off
   alias: Yövalot pois aamulla klo 8:30
   trigger:
@@ -63,7 +61,7 @@
     at: '8:30'
   action:
   - service: switch.turn_off
-    entity_id: switch.tradfri_outlet
+    entity_id: switch.makuuhuone
 - id: phone_outlet_on
   alias: Pistorasia päälle kun akku on tyhja
   trigger:
@@ -355,6 +353,19 @@
       target: -323043671
       message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.octavia'')
         }} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
+- id: Evening_scene_on
+  alias: Olohuoneen valot himmeälle illala
+  trigger:
+  - platform: state
+    entity_id: media_player.samsung_6_series_55_ue55ku6075
+    to: 'on'
+  condition:
+  - condition: time
+    after: '20:00:00'
+    before: '23:00:00'
+  action:
+  - service: scene.turn_on
+    entity_id: scene.evening
 - id: heatpump_to_cooling_evening
   alias: Pumppu lämmitykselle aamulla
   trigger:
@@ -383,52 +394,6 @@
       temperature: 21.5
   - service: climate.turn_off
     entity_id: climate.pumppu
-- id: enable_zigbee_join
-  alias: Enable Zigbee joining
-  hide_entity: true
-  trigger:
-    platform: state
-    entity_id: input_boolean.zigbee_permit_join
-    to: 'on'
-  action:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/bridge/config/permit_join
-      payload: 'true'
-  - service: timer.start
-    data:
-      entity_id: timer.zigbee_permit_join
-- id: disable_zigbee_join
-  alias: Disable Zigbee joining
-  trigger:
-  - entity_id: input_boolean.zigbee_permit_join
-    platform: state
-    to: 'off'
-  action:
-  - data:
-      payload: 'false'
-      topic: zigbee2mqtt/bridge/config/permit_join
-    service: mqtt.publish
-  - data:
-      entity_id: timer.zigbee_permit_join
-    service: timer.cancel
-  hide_entity: true
-- id: disable_zigbee_join_timer
-  alias: Disable Zigbee joining by timer
-  hide_entity: true
-  trigger:
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.zigbee_permit_join
-  action:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/bridge/config/permit_join
-      payload: 'false'
-  - service: input_boolean.turn_off
-    data:
-      entity_id: input_boolean.zigbee_permit_join
 - id: garage_doors_check
   alias: Tarkista autotallin ovet
   trigger:
@@ -474,3 +439,78 @@
     domain: light
     entity_id: light.olohuone_kaikki_valot
     type: toggle
+- id: All_lights_off
+  alias: Kaikki valot pois
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: eteinen
+      event: 4002
+  action:
+  - service: switch.turn_off
+    entity_id: switch.olohuone1
+  - service: light.turn_off
+    entity_id: light.olohuone_kaikki_valot
+- id: Bathroom_light
+  alias: Vessan valot
+  trigger:
+    platform: state
+    entity_id: binary_sensor.presence_9
+    to: 'on'
+  action:
+  - service: light.turn_on
+    data:
+      entity_id: light.koristevalo
+      brightness: 200
+  - service: timer.start
+    entity_id: timer.wc
+- id: Bathroom_light_active
+  alias: Vessan valot seuranta
+  trigger:
+    platform: state
+    entity_id: binary_sensor.presence_9
+    to: 'off'
+  action:
+  - service: timer.start
+    entity_id: timer.wc
+- id: Bathroom_light_off
+  alias: Vessan valot pois
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.wc
+  action:
+  - service: light.turn_off
+    entity_id: light.koristevalo
+- id: Playroom_light
+  alias: Leikkihuoneen valot
+  trigger:
+    platform: state
+    entity_id: binary_sensor.presence_19
+    to: 'on'
+  action:
+  - service: light.turn_on
+    data:
+      entity_id: light.leikkihuone
+      brightness: 200
+- id: Playroom_light_active
+  alias: Leikkihuoneen valot seuranta
+  trigger:
+    platform: state
+    entity_id: binary_sensor.presence_19
+    to: 'off'
+  action:
+  - service: timer.start
+    entity_id: timer.leikkihuone
+- id: Leikkihuoneen_light_off
+  alias: Leikkihuoneen valot pois
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.leikkihuone
+  action:
+  - service: light.turn_off
+    entity_id: light.leikkihuone
