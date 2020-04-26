@@ -458,29 +458,38 @@
     platform: state
     entity_id: binary_sensor.presence_9
     to: 'on'
+  condition:
+  - condition: time
+    after: '6:00:01'
+    before: '20:30:00'
   action:
   - service: light.turn_on
     data:
       entity_id: light.koristevalo
       brightness: 200
-  - service: timer.start
-    entity_id: timer.wc
-- id: Bathroom_light_active
-  alias: Vessan valot seuranta
+- id: Bathroom_light_night
+  alias: Vessan valot
+  trigger:
+    platform: state
+    entity_id: binary_sensor.presence_9
+    to: 'on'
+  condition:
+  - condition: time
+    after: '20:30:01'
+    before: '06:00:00'
+  action:
+  - service: light.turn_on
+    data:
+      entity_id: light.koristevalo
+      brightness: 10
+- id: Bathroom_light_off
+  alias: Vessan valot pois
   trigger:
     platform: state
     entity_id: binary_sensor.presence_9
     to: 'off'
-  action:
-  - service: timer.start
-    entity_id: timer.wc
-- id: Bathroom_light_off
-  alias: Vessan valot pois
-  trigger:
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.wc
+    for:
+      minutes: 5
   action:
   - service: light.turn_off
     entity_id: light.koristevalo
@@ -495,22 +504,98 @@
     data:
       entity_id: light.leikkihuone
       brightness: 200
-- id: Playroom_light_active
-  alias: Leikkihuoneen valot seuranta
+- id: Leikkihuoneen_light_off
+  alias: Leikkihuoneen valot pois
   trigger:
     platform: state
     entity_id: binary_sensor.presence_19
     to: 'off'
-  action:
-  - service: timer.start
-    entity_id: timer.leikkihuone
-- id: Leikkihuoneen_light_off
-  alias: Leikkihuoneen valot pois
-  trigger:
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.leikkihuone
+    for:
+      minutes: 15
   action:
   - service: light.turn_off
     entity_id: light.leikkihuone
+- id: Garage_door_closed
+  alias: Autotallin ovi kiinni
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: eteinen
+      event: 5002
+  condition:
+  - condition: state
+    entity_id: cover.autotallin_ovi
+    state: open
+  action:
+  - service: cover.close_cover
+    entity_id: cover.autotallin_ovi
+- id: Garage_door_timer
+  alias: Autotallin ovi ajastin
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: eteinen
+      event: 5002
+  condition:
+  - condition: state
+    entity_id: cover.autotallin_ovi
+    state: closed
+  action:
+  - service: timer.start
+    data:    
+      entity_id: timer.garagedooropen
+      duration: '0:05:00'
+- id: Garage_door_open
+  alias: Autotallin ovi auki
+  trigger:
+    platform: state
+    entity_id: binary_sensor.openclose_20
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: timer.garagedooropen
+    state: active
+  - condition: state
+    entity_id: cover.autotallin_ovi
+    state: closed
+  action:
+  - service: cover.open_cover
+    entity_id: cover.autotallin_ovi
+- id: Bathroom_lights
+  alias: Vessan valot
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: tradfri_remote_control
+      event: 1002
+  condition:
+  - condition: time
+    after: '6:00:00'
+    before: '21:00:00'
+  action:
+  - service: light.toggle
+    data:
+      entity_id: light.wc
+      brightness: 120
+  - service: switch.toggle
+    entity_id: switch.shelly_shsw_1_bcddc277746f
+- id: Bathroom_lights_night
+  alias: Vessan valot
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: tradfri_remote_control
+      event: 1002
+  condition:
+  - condition: time
+    after: '21:00:01'
+    before: '05:59:59'
+  action:
+  - service: light.toggle
+    data:
+      entity_id: light.Isowc1
+      brightness: 1

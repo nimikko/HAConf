@@ -2,6 +2,8 @@ homeassistant:
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
+  whitelist_external_dirs:
+  - /tmp
   latitude: !secret lat
   longitude: !secret lon
   # Impacts weather/sunrise data (altitude above sea level in meters)
@@ -156,12 +158,10 @@ timer:
     name: Octavia lämmitys jäljellä
   golf:
     name: Golf lämmitys jäljellä
-  wc:
-    name: Vessan valot
-    duration: '00:05:00'
-  leikkihuone:
-    name: Leikkihuoneen valot
-    duration: '00:15:00'
+  garagedooropen:
+    name: Autotallin ovi avaus
+  garagedoorclose:
+    name: Autotallin ovi sulku
 # Text to speech
 tts:
   - platform: google_translate
