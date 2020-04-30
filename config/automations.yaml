@@ -415,30 +415,6 @@
         | list %} {% if open_doors | length == 1 %} {{ open_doors[0] }} on auki. {%
         else %} {{ open_doors[:-1] | join('', '') }}{{'''' if open_doors | length
         > 2 else '' ''}} ja {{ open_doors[-1]}} on auki. {% endif %}'
-- id: '1578153226703'
-  alias: Turn on lights xiaomi
-  description: ''
-  trigger:
-  - entity_id: sensor.0x00158d00039d636c_click
-    platform: state
-    to: 'single'
-  condition: []
-  action:
-  - service: switch.toggle
-    entity_id: group.koristevalot
-- id: '1578153226704'
-  alias: Turn off lights xiaomi
-  description: ''
-  trigger:
-  - entity_id: sensor.0x00158d00039d636c_click
-    platform: state
-    to: 'double'
-  condition: []
-  action:
-  - device_id: 4e61861de4194b31aad7585ffa068606
-    domain: light
-    entity_id: light.olohuone_kaikki_valot
-    type: toggle
 - id: All_lights_off
   alias: Kaikki valot pois
   trigger:
@@ -453,7 +429,7 @@
   - service: light.turn_off
     entity_id: light.olohuone_kaikki_valot
 - id: Bathroom_light
-  alias: Vessan valot
+  alias: Pikkuvessan valot
   trigger:
     platform: state
     entity_id: binary_sensor.presence_9
@@ -461,21 +437,21 @@
   condition:
   - condition: time
     after: '6:00:01'
-    before: '20:30:00'
+    before: '23:30:00'
   action:
   - service: light.turn_on
     data:
       entity_id: light.koristevalo
       brightness: 200
 - id: Bathroom_light_night
-  alias: Vessan valot
+  alias: Pikkuvessan valot yöllä
   trigger:
     platform: state
     entity_id: binary_sensor.presence_9
     to: 'on'
   condition:
   - condition: time
-    after: '20:30:01'
+    after: '23:30:01'
     before: '06:00:00'
   action:
   - service: light.turn_on
@@ -564,7 +540,7 @@
   - service: cover.open_cover
     entity_id: cover.autotallin_ovi
 - id: Bathroom_lights
-  alias: Vessan valot
+  alias: Ison vessan valot
   trigger:
     platform: event
     event_type: deconz_event
@@ -583,7 +559,7 @@
   - service: switch.toggle
     entity_id: switch.shelly_shsw_1_bcddc277746f
 - id: Bathroom_lights_night
-  alias: Vessan valot
+  alias: Ison vessan valot yöllä
   trigger:
     platform: event
     event_type: deconz_event
