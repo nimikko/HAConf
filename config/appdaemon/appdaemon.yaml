@@ -1,0 +1,13 @@
+appdaemon:
+  plugins:
+    HASS:
+      type: hass
+  latitude: !secret lat
+  longitude: !secret lon
+  elevation: 32
+  time_zone: Europe/Helsinki
+http:
+  url: http://127.0.0.1:5050
+hadashboard:
+admin:
+api:

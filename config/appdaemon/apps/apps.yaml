@@ -1,0 +1,30 @@
+tyohuonekattovalot:
+  module: controllerx
+  class: E1810Controller
+  controller: tyohuone
+  integration: deconz
+  light: light.tyohuone_kaikki_valot
+olohuonepienet:
+  module: controllerx
+  class: E1810Controller
+  controller: olohuone_pieni
+  integration: deconz
+  light: light.olohuone_pieni
+olohuoneisot:
+  module: controllerx
+  class: E1810Controller
+  controller: olohuone_iso
+  integration: deconz
+  light: light.olohuone_iso
+leikkihuone:
+  module: controllerx
+  class: E1810Controller
+  controller: leikkihuone
+  integration: deconz
+  light: light.leikkihuone
+tyohuonelednauhat:
+  module: controllerx
+  class: E1810Controller
+  controller: tradfri_remote_control
+  integration: deconz
+  light: light.tyohuone_lednauha

@@ -113,11 +113,10 @@ light:
   - platform: group
     name: Tyohuone kaikki valot
     entities:
-     - light.tyohuone
-     - light.tradfri_driver
-     - light.tradfri_driver_2
-     - light.tradfri_driver_3
-     - light.tradfri_driver_4
+     - light.light_15
+     - light.light_17
+     - light.light_19
+     - light.light_22
   - platform: group
     name: Tyohuone kattovalot
     entities:
@@ -165,7 +164,11 @@ timer:
 # Text to speech
 tts:
   - platform: google_translate
-
+media_player:
+  - platform: samsungtv_tizen
+    host: 192.168.1.45
+    port: 8002
+    mac: 40:16:3b:0f:c9:95
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
