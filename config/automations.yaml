@@ -442,11 +442,15 @@
   - condition: time
     after: '6:00:01'
     before: '23:30:00'
+  - condition: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 5
   action:
   - service: light.turn_on
     data:
       entity_id: light.koristevalo
-      brightness: 200
+      brightness: 150
 - id: Bathroom_light_night
   alias: Pikkuvessan valot yöllä
   trigger:

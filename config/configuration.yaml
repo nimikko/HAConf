@@ -95,11 +95,11 @@ light:
   - platform: group
     name: Olohuone pienet valot
     entities:
-     - light.olohuone_pieni
+    - light.olohuone_pieni
   - platform: group
     name: Olohuone isot valot
     entities:
-     - light.olohuone_iso
+    - light.olohuone_iso
   - platform: group
     name: Olohuone ovien valot
     entities:
@@ -108,29 +108,26 @@ light:
   - platform: group
     name: Olohuone kaikki valot
     entities:
-     - light.olohuone_iso
-     - light.olohuone_pieni
+    - light.olohuone_iso
+    - light.olohuone_pieni
   - platform: group
     name: Tyohuone kaikki valot
     entities:
-     - light.light_15
-     - light.light_17
-     - light.light_19
-     - light.light_22
+    - light.tyohuone
+    - light.tyohuone_lednauha
   - platform: group
     name: Tyohuone kattovalot
     entities:
-     - light.tyohuone
+    - light.tyohuone
   - platform: group
     name: Tyohuone paneelit
     entities:
-     - light.tradfri_driver_3
-     - light.tradfri_driver_4
+    - light.tradfri_driver_3
+    - light.tradfri_driver_4
   - platform: group
     name: Tyohuone lednauhat
     entities:
-     - light.tradfri_driver
-     - light.tradfri_driver_2
+    - light.tyohuone_lednauha
 input_boolean:
   golf:
     name: Golf automaatti
