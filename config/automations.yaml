@@ -122,8 +122,9 @@
   alias: Aurinkokenno on lämmin
   trigger:
   - platform: template
-    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float
-      }}'
+    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float}}'
+  - platform: time_pattern
+    minutes: '/10'
   condition:
   - condition: time
     after: '9:00:00'
@@ -131,6 +132,8 @@
   - condition: state
     entity_id: input_boolean.pumppu
     state: 'off'
+  - condition: template
+    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float}}'
   action:
   - service: input_boolean.turn_on
     data:
@@ -140,19 +143,22 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Uima-altaan pumppu päälle*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: Aurinkokenno on {{ states('sensor.aurinkenno_temperature') }} ja uima-allas
         {{ states('sensor.uima_allas_temperature') }}
 - id: pool_heating_off
   alias: Aurinkokenno jäähdyttää
   trigger:
   - platform: template
-    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float
-      }}'
+    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float}}'
+  - platform: time_pattern
+    minutes: '/5'
   condition:
   - condition: time
     after: '9:00:00'
     before: '21:00:00'
+  - condition: template
+    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float}}'
   - condition: state
     entity_id: input_boolean.pumppu
     state: 'on'
@@ -165,7 +171,7 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Uima-altaan pumppu pois päältä*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: Tulo on {{ states('sensor.uima_allas_tulo_temperature') }} ja uima-allas
         {{ states('sensor.uima_allas_temperature') }}
 - id: golf_heating_on
@@ -238,7 +244,7 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Golf lämmitys päälle*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.golf'', ''on'')  -%}{{
         states(''input_datetime.golf'') }} {%- else -%}Käynnistetty käsin{%- endif
         %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
@@ -257,7 +263,7 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Golf lämmitys pois*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.golf'') }}
         autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
 - id: ocatavia_heating_on
@@ -330,7 +336,7 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Octavia lämmitys päälle*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.octavia'',
         ''on'')  -%}{{ states(''input_datetime.octavia'') }} {%- else -%}Käynnistetty
         käsin{%- endif %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'')
@@ -350,7 +356,7 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Octavia lämmitys pois*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.octavia'')
         }} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
 - id: Evening_scene_on
@@ -371,31 +377,31 @@
       entity_id: media_player.samsung_tv_remote
       volume_level: 0
 - id: heatpump_to_cooling_evening
-  alias: Pumppu lämmitykselle aamulla
+  alias: Pumppu viilennykselle aamulla
   trigger:
   - platform: time
-    at: 05:30
+    at: '23:30'
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.sisa_temperature
+    above: 23
   action:
   - service: climate.turn_on
     entity_id: climate.pumppu
-  - service: climate.set_temperature
-    data:
-      entity_id: climate.pumppu
-      temperature: 21.5
   - service: climate.set_hvac_mode
     data:
       entity_id: climate.pumppu
-      hvac_mode: heat
-- id: heatpump_off_morning
-  alias: Pumppu  pois illalla
-  trigger:
-  - platform: time
-    at: '23:50'
-  action:
+      hvac_mode: cool
   - service: climate.set_temperature
     data:
       entity_id: climate.pumppu
-      temperature: 21.5
+      temperature: 20
+- id: heatpump_off_morning
+  alias: Pumppu  pois aamulla
+  trigger:
+  - platform: time
+    at: '05:50'
+  action:
   - service: climate.turn_off
     entity_id: climate.pumppu
 - id: garage_doors_check
@@ -413,7 +419,7 @@
   - service: telegram_bot.send_message
     data_template:
       title: '*Autotallin ovet on auki*'
-      target: -323043671
+      target: !secret telegram_chat3
       message: '{% set open_doors = states | selectattr(''entity_id'', ''in'', state_attr(''group.autotallinovet'',''entity_id''))
         | selectattr(''state'',''in'',[''on'',''open'']) | map(attribute=''name'')
         | list %} {% if open_doors | length == 1 %} {{ open_doors[0] }} on auki. {%
@@ -511,6 +517,9 @@
   - condition: state
     entity_id: cover.autotallin_ovi
     state: open
+  - condition: state
+    entity_id: timer.garagedooropen
+    state: idle
   action:
   - service: cover.close_cover
     entity_id: cover.autotallin_ovi

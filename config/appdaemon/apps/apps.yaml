@@ -117,7 +117,7 @@ leikkihuoneon:
     - service: light.toggle
       data:
         entity_id: light.leikkihuone
-        brightness: 100
+        brightness: 200
 tyohuonelednauhat:
   module: controllerx
   class: E1810Controller
@@ -141,4 +141,24 @@ tyohuonelednauhaton:
     - service: light.toggle
       data:
         entity_id: light.tyohuone_lednauha
-        brightness: 100
+        brightness: 150
+replay_lights:
+  module: replay_lights
+  class: ReplayLights
+  numberOfDaysBack: 7
+  databaseType: "MariaDB"
+  databasePassword: !secret dbpassword
+  deviceType: "light"
+  enableTag: "input_boolean.awaymode"
+  enableVal: "on"
+  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot"
+replay_lights_switch:
+  module: replay_lights
+  class: ReplayLights
+  numberOfDaysBack: 7
+  databaseType: "MariaDB"
+  databasePassword: !secret dbpassword
+  deviceType: "switch"
+  enableTag: "input_boolean.awaymode"
+  enableVal: "on"
+  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf"

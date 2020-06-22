@@ -34,6 +34,11 @@ homeassistant:
 default_config:
 recorder:
   db_url: !secret dburl
+  exclude:
+    entities:
+      - sun.sun
+      - sensor.time
+      - sensor.yr_symbol
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
@@ -54,9 +59,10 @@ scene:
         brightness: 50
         color_temp: 420
 
-panasonic_ac:
-  username: !secret pana_user
-  password: !secret pana_password
+climate:
+  - platform: panasonic_ac
+    username: !secret pana_user
+    password: !secret pana_password
     
 # Sensors
 sensor: !include sensors.yaml
@@ -139,6 +145,8 @@ input_boolean:
   octavia_s:
   pumppu:
     name: Uima-allas pumppu
+  awaymode:
+    name: Poissa tila
 input_datetime:
   golf:
     name: Golf lämmitys aika
@@ -148,7 +156,6 @@ input_datetime:
     name: Octavia lämmitys aika
     has_date: false
     has_time: true
-
 timer:
   octavia:
     name: Octavia lämmitys jäljellä
@@ -163,7 +170,7 @@ tts:
   - platform: google_translate
 media_player:
   - platform: samsungtv_tizen
-    host: 192.168.1.45
+    host: !secret tv_host
     port: 8002
     mac: 40:16:3b:0f:c9:95
 group: !include groups.yaml

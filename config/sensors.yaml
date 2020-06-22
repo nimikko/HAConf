@@ -2,9 +2,9 @@
   - platform: onewire
     names:
       28-011437afeeaa: Takka
-      #28-02131ac144aa: Uima-allas Tulo Vihreä
-      #28-0114384070aa: Uima-allas Valkoinen
-      #28-0114377906aa: Aurinkenno Punainen
+      28-02131ac144aa: Uima-allas Tulo
+      28-0114384070aa: Uima-allas
+      28-0114377906aa: Aurinkenno
       28-0319a2792aa7: Ulko
       28-0316a27901fd: Sisa
       28-0316a2794874: Sauna
@@ -42,7 +42,10 @@
       puhelin1:
         value_template: !secret puhelin1
         unit_of_measurement: '%'
-  - platform: mqtt
-    name: Bridge state
-    state_topic: "zigbee2mqtt/bridge/state"
-    icon: mdi:router-wireless
+  - platform: systemmonitor
+    resources:
+      - type: disk_free
+        arg: /home
+      - type: memory_free
+      - type: load_15m
+      - type: processor_use
