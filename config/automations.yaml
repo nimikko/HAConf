@@ -128,7 +128,7 @@
   condition:
   - condition: time
     after: '9:00:00'
-    before: '21:00:00'
+    before: '19:00:00'
   - condition: state
     entity_id: input_boolean.pumppu
     state: 'off'
@@ -140,12 +140,6 @@
       entity_id: input_boolean.pumppu
   - service: switch.turn_on
     entity_id: switch.patteri
-  - service: telegram_bot.send_message
-    data_template:
-      title: '*Uima-altaan pumppu päälle*'
-      target: !secret telegram_chat3
-      message: Aurinkokenno on {{ states('sensor.aurinkenno_temperature') }} ja uima-allas
-        {{ states('sensor.uima_allas_temperature') }}
 - id: pool_heating_off
   alias: Aurinkokenno jäähdyttää
   trigger:
@@ -168,12 +162,6 @@
       entity_id: input_boolean.pumppu
   - service: switch.turn_off
     entity_id: switch.patteri
-  - service: telegram_bot.send_message
-    data_template:
-      title: '*Uima-altaan pumppu pois päältä*'
-      target: !secret telegram_chat3
-      message: Tulo on {{ states('sensor.uima_allas_tulo_temperature') }} ja uima-allas
-        {{ states('sensor.uima_allas_temperature') }}
 - id: golf_heating_on
   alias: Golf lämmitys
   trigger:
@@ -382,9 +370,8 @@
   - platform: time
     at: '23:30'
   condition:
-  - condition: numeric_state
-    entity_id: sensor.sisa_temperature
-    above: 23
+  - condition: template
+    value_template:  "{{ states('sensor.temperature_4') |float > states('input_number.temperature') |float +2 }}"
   action:
   - service: climate.turn_on
     entity_id: climate.pumppu
@@ -393,9 +380,9 @@
       entity_id: climate.pumppu
       hvac_mode: cool
   - service: climate.set_temperature
-    data:
+    data_template:
       entity_id: climate.pumppu
-      temperature: 20
+      temperature: "{{states('input_number.temperature') |float -2}}"
 - id: heatpump_off_morning
   alias: Pumppu  pois aamulla
   trigger:

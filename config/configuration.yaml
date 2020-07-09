@@ -109,18 +109,19 @@ light:
   - platform: group
     name: Olohuone ovien valot
     entities:
-     - light.tradfri_door_2_2
-     - light.tradfri_door_3
+    - light.olohuone_ovet
   - platform: group
     name: Olohuone kaikki valot
     entities:
     - light.olohuone_iso
     - light.olohuone_pieni
+    - light.olohuone_ovet
   - platform: group
     name: Tyohuone kaikki valot
     entities:
     - light.tyohuone
     - light.tyohuone_lednauha
+    - light.tyohuone_ledpaneelit
   - platform: group
     name: Tyohuone kattovalot
     entities:
@@ -128,8 +129,7 @@ light:
   - platform: group
     name: Tyohuone paneelit
     entities:
-    - light.tradfri_driver_3
-    - light.tradfri_driver_4
+    - light.tyohuone_ledpaneelit
   - platform: group
     name: Tyohuone lednauhat
     entities:
@@ -156,6 +156,14 @@ input_datetime:
     name: Octavia lämmitys aika
     has_date: false
     has_time: true
+input_number:
+  temperature:
+    name: Lämpötila
+    initial: 22
+    min: 19
+    max: 25
+    step: 0.5
+    icon: mdi:temperature-celsius
 timer:
   octavia:
     name: Octavia lämmitys jäljellä
