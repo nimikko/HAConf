@@ -1,0 +1,90 @@
+- id: fireplace_fan_on
+  alias: Puhallus päälle kun takka on päällä
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    above: 38
+  action:
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: fan_only
+  - service: climate.set_fan_mode
+    data:
+      entity_id: climate.pumppu
+      fan_mode: LowMid
+- id: fireplace_fan_off
+  alias: Puhallus pois kun takka on kylmä
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    below: 35
+    for:
+      minutes: 2
+  condition:
+  - condition: state
+    entity_id: climate.pumppu
+    state: fan_only
+  action:
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: heat
+  - service: climate.set_fan_mode
+    data:
+      entity_id: climate.pumppu
+  - service: climate.set_temperature
+    data_template:
+      entity_id: climate.pumppu
+      temperature: "{{states('input_number.temperature') |float}}"
+- id: heatpump_to_cooling_evening
+  alias: Pumppu viilennykselle illalla
+  trigger:
+  - platform: time
+    at: '23:30'
+  condition:
+  - condition: template
+    value_template:  "{{ states('sensor.temperature_4') |float > states('input_number.temperature') |float +2 }}"
+  action:
+  - service: climate.turn_on
+    entity_id: climate.pumppu
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: cool
+  - service: climate.set_temperature
+    data_template:
+      entity_id: climate.pumppu
+      temperature: "{{states('input_number.temperature') |float -2}}"
+- id: heatpump_off_morning
+  alias: Pumppu  pois aamulla
+  trigger:
+  - platform: time
+    at: '05:50'
+  action:
+  - service: climate.turn_off
+    entity_id: climate.pumppu
+- id: heatpump_off_evening
+  alias: Pumppu  pois illalla
+  trigger:
+  - platform: time
+    at: '23:30'
+  action:
+  - service: climate.turn_off
+    entity_id: climate.pumppu
+- id: heatpump_to_heating_morning
+  alias: Pumppu lämmitykselle aamulla
+  trigger:
+  - platform: time
+    at: '8:30'
+  action:
+  - service: climate.turn_on
+    entity_id: climate.pumppu
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: heat
+  - service: climate.set_temperature
+    data_template:
+      entity_id: climate.pumppu
+      temperature: "{{states('input_number.temperature') |float}}"

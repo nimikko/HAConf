@@ -2,7 +2,6 @@ koristevalot:
   name: Koristevalot
   entities:
     - switch.leikkihuone
-    - switch.vierashuone
     - switch.olohuone1
     - switch.olohuone2
     - switch.keittio
@@ -15,3 +14,9 @@ autotallinovet:
      - binary_sensor.sivuovi
      - binary_sensor.kylmavarasto
      - binary_sensor.autotallin_ovi
+vanhat_valot:
+  name: Vanhat valot
+  entities:
+    - switch.shelly_shsw_1_bcddc27730cf #Eteinen
+    - switch.shelly_shsw_1_bcddc27741be #Käytävä
+    - switch.shelly_shsw_1_bcddc277746f #Peilivalo

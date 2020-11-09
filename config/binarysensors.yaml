@@ -2,22 +2,16 @@
     sensors:
       golf_0b:
         value_template: "{{ is_state('sensor.golf_0',states('sensor.time')|string) }}"
-        entity_id: sensor.time
       golf_10b:
         value_template: "{{ is_state('sensor.golf_10',states('sensor.time')|string) }}"
-        entity_id: sensor.time
       golf_20b:
         value_template: "{{ is_state('sensor.golf_20',states('sensor.time')|string) }}"
-        entity_id: sensor.time
       octavia_0b:
         value_template: "{{ is_state('sensor.octavia_0',states('sensor.time')|string) }}"
-        entity_id: sensor.time
       octavia_10b:
         value_template: "{{ is_state('sensor.octavia_10',states('sensor.time')|string) }}"
-        entity_id: sensor.time
       octavia_20b:
         value_template: "{{ is_state('sensor.octavia_20',states('sensor.time')|string) }}"
-        entity_id: sensor.time
   - platform: mqtt
     name: "Autotallin ovi"
     state_topic: "garage/door/1/status"
@@ -53,3 +47,5 @@
     availability_topic: "GarHAge/availability"
     device_class: door
     qos: 0  
+  - platform: workday
+    country: FI

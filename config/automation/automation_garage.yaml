@@ -1,0 +1,255 @@
+- id: golf_heating_on
+  alias: Golf lämmitys
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.golf_0b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.golf_10b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.golf_20b
+    to: 'on'
+  - platform: state
+    entity_id: switch.golf
+    to: 'on'
+  condition:
+    condition: or
+    conditions:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: switch.golf
+        state: 'on'
+      - condition: state
+        entity_id: timer.golf
+        state: idle
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.golf_0b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: 10
+      - condition: state
+        entity_id: input_boolean.golf
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.golf_10b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -10
+      - condition: state
+        entity_id: input_boolean.golf
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.golf_20b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -20
+      - condition: state
+        entity_id: input_boolean.golf
+        state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.autojen_lammitys
+    data:
+      variables:
+        car: timer.golf
+  - service: switch.turn_on
+    entity_id: switch.golf
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Golf lämmitys päälle*'
+      target: !secret telegram_chat3
+      message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.golf'', ''on'')  -%}{{
+        states(''input_datetime.golf'') }} {%- else -%}Käynnistetty käsin{%- endif
+        %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.golf
+- id: golf_heating_off
+  alias: Golf lämmitys pois
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.golf
+  action:
+  - service: switch.turn_off
+    entity_id: switch.golf
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Golf lämmitys pois*'
+      target: !secret telegram_chat3
+      message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.golf'') }}
+        autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
+- id: ocatavia_heating_on
+  alias: Octavia lämmitys
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.octavia_0b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.octavia_10b
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.octavia_20b
+    to: 'on'
+  - platform: state
+    entity_id: switch.octavia
+    to: 'on'
+  condition:
+    condition: or
+    conditions:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: switch.octavia
+        state: 'on'
+      - condition: state
+        entity_id: timer.octavia
+        state: idle
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.octavia_0b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: 10
+      - condition: state
+        entity_id: input_boolean.octavia
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.octavia_10b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -10
+      - condition: state
+        entity_id: input_boolean.octavia
+        state: 'on'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.octavia_20b
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.autotalli_temperature
+        below: -20
+      - condition: state
+        entity_id: input_boolean.octavia
+        state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.autojen_lammitys
+    data:
+      variables:
+        car: timer.octavia
+  - service: switch.turn_on
+    entity_id: switch.octavia
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Octavia lämmitys päälle*'
+      target: !secret telegram_chat3
+      message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.octavia'',
+        ''on'')  -%}{{ states(''input_datetime.octavia'') }} {%- else -%}Käynnistetty
+        käsin{%- endif %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'')
+        }}'
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.octavia
+- id: ocatavia_heating_off
+  alias: Octavia lämmitys pois
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.octavia
+  action:
+  - service: switch.turn_off
+    entity_id: switch.octavia
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Octavia lämmitys pois*'
+      target: !secret telegram_chat3
+      message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.octavia'')
+        }} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
+- id: garage_doors_check
+  alias: Tarkista autotallin ovet
+  trigger:
+    platform: time
+    at: '21:00'
+  condition:
+    condition: template
+    value_template: '{{ states | selectattr(''entity_id'', ''in'', state_attr(''group.autotallinovet'',''entity_id''))
+      | selectattr(''state'',''in'',[''on'',''open'']) | list | length >= 1 }}'
+  action:
+  - service: telegram_bot.send_message
+    data_template:
+      title: '*Autotallin ovet on auki*'
+      target: !secret telegram_chat3
+      message: '{% set open_doors = states | selectattr(''entity_id'', ''in'', state_attr(''group.autotallinovet'',''entity_id''))
+        | selectattr(''state'',''in'',[''on'',''open'']) | map(attribute=''name'')
+        | list %} {% if open_doors | length == 1 %} {{ open_doors[0] }} on auki. {%
+        else %} {{ open_doors[:-1] | join('', '') }}{{'''' if open_doors | length
+        > 2 else '' ''}} ja {{ open_doors[-1]}} on auki. {% endif %}'
+- id: Garage_door_closed
+  alias: Autotallin ovi kiinni
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: eteinen
+      event: 5002
+  condition:
+  - condition: state
+    entity_id: cover.autotallin_ovi
+    state: open
+  - condition: state
+    entity_id: timer.garagedooropen
+    state: idle
+  action:
+  - service: cover.close_cover
+    entity_id: cover.autotallin_ovi
+- id: Garage_door_timer
+  alias: Autotallin ovi ajastin
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: eteinen
+      event: 5002
+  condition:
+  - condition: state
+    entity_id: cover.autotallin_ovi
+    state: closed
+  action:
+  - service: timer.start
+    data:    
+      entity_id: timer.garagedooropen
+      duration: '0:05:00'
+- id: Garage_door_open
+  alias: Autotallin ovi auki
+  trigger:
+    platform: state
+    entity_id: binary_sensor.openclose_20
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: timer.garagedooropen
+    state: active
+  - condition: state
+    entity_id: cover.autotallin_ovi
+    state: closed
+  action:
+  - service: cover.open_cover
+    entity_id: cover.autotallin_ovi

@@ -1,0 +1,44 @@
+- id: pool_heating_on
+  alias: Aurinkokenno on lämmin
+  trigger:
+  - platform: template
+    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float}}'
+  - platform: time_pattern
+    minutes: '/10'
+  condition:
+  - condition: time
+    after: '9:00:00'
+    before: '19:00:00'
+  - condition: state
+    entity_id: input_boolean.pumppu
+    state: 'off'
+  - condition: template
+    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float}}'
+  action:
+  - service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.pumppu
+  - service: switch.turn_on
+    entity_id: switch.patteri
+- id: pool_heating_off
+  alias: Aurinkokenno jäähdyttää
+  trigger:
+  - platform: template
+    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float}}'
+  - platform: time_pattern
+    minutes: '/5'
+  condition:
+  - condition: time
+    after: '9:00:00'
+    before: '21:00:00'
+  - condition: template
+    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float}}'
+  - condition: state
+    entity_id: input_boolean.pumppu
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.pumppu
+  - service: switch.turn_off
+    entity_id: switch.patteri

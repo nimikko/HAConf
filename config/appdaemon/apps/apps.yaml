@@ -16,6 +16,12 @@ olohuoneisot:
   controller: olohuone_iso
   integration: deconz
   light: light.olohuone_iso
+olohuoneovet:
+  module: controllerx
+  class: E1810Controller
+  controller: olohuone_ovet
+  integration: deconz
+  light: light.olohuone_ovet
 leikkihuone:
   module: controllerx
   class: E1810Controller
@@ -40,26 +46,46 @@ olohuoneovet:
   controller: olohuone_ovet
   integration: deconz
   light: light.olohuone_ovet
+makuuhuone01:
+  module: controllerx
+  class: E1810Controller
+  controller: makuuhuone01
+  integration: deconz
+  light: light.makuuhuone
+makuuhuone02:
+  module: controllerx
+  class: E1810Controller
+  controller: makuuhuone02
+  integration: deconz
+  light: light.makuuhuone
 replay_lights:
   module: replay_lights
   class: ReplayLights
   numberOfDaysBack: 7
   databaseType: "MariaDB"
   databasePassword: !secret dbpassword
+  databaseHost: "core-mariadb"
   deviceType: "light"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot"
+  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot"
 replay_lights_switch:
   module: replay_lights
   class: ReplayLights
   numberOfDaysBack: 7
   databaseType: "MariaDB"
   databasePassword: !secret dbpassword
+  databaseHost: "core-mariadb"
   deviceType: "switch"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf"
-Energy:
+  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf,switch.shelly_shsw_1_bcddc277746f_firmware_update,switch.shelly_shsw_1_bcddc27741be_firmware_update"
+EPrice:
   module: pricefetch
   class: PriceFetch
+# EnergyDevice:
+  # module: deviceoptimization
+  # class: Deviceoptimization
+# enervent:
+  # module: Enervent-eda
+  # class: enervent_eda
