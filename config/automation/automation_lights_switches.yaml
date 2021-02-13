@@ -318,7 +318,7 @@
   alias: Kasvivalo päälle
   trigger:
   - platform: time
-    at: '9:30'
+    at: '10:00'
   - platform: state
     entity_id: input_boolean.flora
     to: 'on'
