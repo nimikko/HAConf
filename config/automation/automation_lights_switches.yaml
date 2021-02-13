@@ -1,60 +1,52 @@
-- id: decoration_ligths_on
+- id: decoration_lights_on
   alias: Valot päälle ennen aurinkolaskua
   trigger:
   - platform: numeric_state
     entity_id: sun.sun
-    value_template: "{{ state_attr('sun.sun', 'elevation') }}"
+    attribute: elevation
     below: 0
   - platform: template
     value_template: >
-      {{ is_state('sensor.time', '08:00' if now().isoweekday() > 5 else '07:00') }}
+      {{ is_state('sensor.time', '07:30' if is_state('binary_sensor.workday_sensor', 'off') else '07:00') }}
+  condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: 0.1
   action:
-    service: switch.turn_on
+  - service: switch.turn_on
     entity_id: group.koristevalot
-- id: decoration_ligths_off
+  - service: switch.turn_on
+    entity_id: switch.p2
+  - service: switch.turn_on
+    entity_id: switch.p11
+- id: decoration_lights_off
   alias: Valot pois klo 23 ja aamulla kun aurinko on noussut
   trigger:
   - platform: time
     at: '23:10'
-  - platform: template
-    value_template: >
-      {{ state_attr('sun.sun', 'elevation') > 0 if now().hour>=7}}
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    above: 0.2
   action:
   - service: switch.turn_off
     entity_id: group.koristevalot
-- id: decoration_ligths_tree_on
-  alias: Kuusen valot päälle ennen aurinkolaskua
+- id: decoration_lights_guest_off
+  alias: Vierashuoneen valot pois klo 22
   trigger:
-  - platform: numeric_state
-    entity_id: sun.sun
-    value_template: "{{ state_attr('sun.sun', 'elevation') }}"
-    below: 0
   - platform: time
-    at: '8:30'
-  condition:
-  - condition: time
-    after: '7:20:00'
-    before: '19:40:00'
-  action:
-    service: switch.turn_on
-    entity_id: switch.tradfri_outlet_7
-- id: decoration_ligths_tree_off
-  alias: Kuusen valot pois klo 19:50 ja aamulla kun aurinko on noussut
-  trigger:
-  - platform: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
-    above: 0
-  - platform: time
-    at: '19:50'
+    at: '22:10'
   action:
   - service: switch.turn_off
-    entity_id: switch.tradfri_outlet_7
+    entity_id: switch.p2
+  - service: switch.turn_off
+    entity_id: switch.p11
 - id: Evening_scene_on
   alias: Olohuoneen valot himmeälle illala
   trigger:
   - platform: state
-    entity_id: media_player.samsung_ue55ku6075_2
+    entity_id: media_player.samsung_ue55ku6075
     to: 'on'
   condition:
   - condition: time
@@ -152,7 +144,7 @@
       entity_id: light.wc
       brightness: 120
   - service: switch.toggle
-    entity_id: switch.shelly_shsw_1_bcddc277746f
+    entity_id: switch.peilikaappi
 - id: Bathroom_lights_night
   alias: Ison vessan valot yöllä
   trigger:
@@ -173,14 +165,39 @@
 - id: hallway_lights
   alias: Käytävän valot
   trigger:
-    platform: event
+  - platform: event
     event_type: deconz_event
     event_data:
       id: eteinen
-      event: 1002
+      event: 2002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: eteinen
+      event: 3002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: ruokahuone
+      event: 2002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: ruokahuone
+      event: 3002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: keittio
+      event: 2002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: keittio
+      event: 3002
   action:
   - service: switch.toggle
-    entity_id: switch.shelly_shsw_1_bcddc27741be
+    entity_id: switch.kaytava
 - id: all_lights_off_timer
   alias: Valot pois ajastin
   trigger:
@@ -218,15 +235,10 @@
     event_type: deconz_event
     event_data:
       id: eteinen
-      event: 2002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: eteinen
-      event: 3002
+      event: 1002
   action:
   - service: switch.toggle
-    entity_id: switch.shelly_shsw_1_bcddc27730cf
+    entity_id: switch.eteinen
 - id: laundryroom_lights
   alias: Kodinhoitohuoneen valot
   trigger:
@@ -237,7 +249,55 @@
       event: 1002
   action:
   - service: switch.toggle
-    entity_id: switch.shelly_shsw_1_bcddc277beb9
+    entity_id: switch.kodinhoitohuone
+- id: diningroom_lights
+  alias: Ruokahuone valot
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: ruokahuone
+      event: 1002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: keittio
+      event: 4002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: keittio
+      event: 1002
+  action:
+  - service: switch.toggle
+    entity_id: switch.ruokahuone
+- id: sauna_lights
+  alias: Sauna valot
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: sauna
+      event: 1002
+  action:
+  - service: switch.toggle
+    entity_id: switch.sauna
+- id: kitchen_lights
+  alias: Keittiö valot
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: keittio
+      event: 5002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: ruokahuone
+      event: 5002
+  action:
+  - service: switch.toggle
+    entity_id: switch.keittio_2
 - id: night_lights_on
   alias: Yövalot päälle ennen nukkumaan menoa
   trigger:
@@ -254,26 +314,54 @@
   action:
   - service: switch.turn_off
     entity_id: switch.makuuhuone
-- id: flora_ligths_on
+- id: flora_lights_on
   alias: Kasvivalo päälle
   trigger:
   - platform: time
     at: '9:30'
-  condition:
-    condition: state
-    entity_id: 'binary_sensor.workday_sensor'
-    state: 'on'
+  - platform: state
+    entity_id: input_boolean.flora
+    to: 'on'
   action:
-    service: switch.turn_on
-    entity_id: switch.on_off_plug_in_unit_41
-- id: flora_ligths_off
+  - service: switch.turn_on
+    entity_id: group.kukkavalot
+  - service: light.turn_on
+    entity_id: light.kukkavalo
+- id: flora_lights_off
   alias: Kasvivalo pois
   trigger:
   - platform: time
-    at: '15:30'
+    at: '18:30'
+  - platform: state
+    entity_id: input_boolean.flora
+    to: 'off'
   action:
   - service: switch.turn_off
-    entity_id: switch.on_off_plug_in_unit_41
+    entity_id: group.kukkavalot
+  - service: light.turn_off
+    entity_id: light.kukkavalo
+- id: bathroom_floralightsoff
+  alias: Vessan kasvivalopois
+  trigger:
+    platform: state
+    entity_id: switch.peilikaappi
+    to: 'on'
+  action:
+  - service: switch.turn_off
+    entity_id: switch.p1
+- id: bathroom_floralightson
+  alias: Vessan kasvivalopois
+  trigger:
+    platform: state
+    entity_id: switch.peilikaappi
+    to: 'off'
+  condition:
+  - condition: time
+    after: '9:30:01'
+    before: '18:30:00'
+  action:
+  - service: switch.turn_on
+    entity_id: switch.p1
 - id: Notification
   alias: Ilmoitus liikkeestä
   trigger:

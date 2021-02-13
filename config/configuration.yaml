@@ -2,7 +2,7 @@ homeassistant:
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
-  whitelist_external_dirs:
+  allowlist_external_dirs:
   - /tmp
   latitude: !secret lat
   longitude: !secret lon
@@ -44,15 +44,15 @@ http:
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
 
-google_assistant:
-  project_id: homeassistantsync-259019
-  service_account: !include HomeAssistantSync.json
-  secure_devices_pin: !secret pin
-  report_state: true
-  exposed_domains:
-    - switch
-    - light
-    - cover
+# google_assistant:
+  # project_id: homeassistantsync-259019
+  # service_account: !include HomeAssistantSync.json
+  # secure_devices_pin: !secret pin
+  # report_state: true
+  # exposed_domains:
+    # - switch
+    # - light
+    # - cover
   # entity_config:
     # switch.kitchen:
       # name: CUSTOM_NAME_FOR_GOOGLE_ASSISTANT
@@ -68,11 +68,11 @@ discovery:
 scene:
   - name: Evening
     entities:
-      light.olohuone_isot_valot : off
-      light.olohuone_ovien_valot: off
-      light.olohuone_pienet_valot:
+      light.olohuone_iso : off
+      light.olohuone_ovet: off
+      light.olohuone_pieni:
         state: on
-        brightness: 50
+        brightness: 40
         color_temp: 420
     
 # Sensors
@@ -110,18 +110,6 @@ cover:
     device_class: garage
 light:
   - platform: group
-    name: Olohuone pienet valot
-    entities:
-    - light.olohuone_pieni
-  - platform: group
-    name: Olohuone isot valot
-    entities:
-    - light.olohuone_iso
-  - platform: group
-    name: Olohuone ovien valot
-    entities:
-    - light.olohuone_ovet
-  - platform: group
     name: Olohuone kaikki valot
     entities:
     - light.olohuone_iso
@@ -133,18 +121,6 @@ light:
     - light.tyohuone
     - light.tyohuone_lednauha
     - light.tyohuone_ledpaneelit
-  - platform: group
-    name: Tyohuone kattovalot
-    entities:
-    - light.tyohuone
-  - platform: group
-    name: Tyohuone paneelit
-    entities:
-    - light.tyohuone_ledpaneelit
-  - platform: group
-    name: Tyohuone lednauhat
-    entities:
-    - light.tyohuone_lednauha
   - platform: group
     name: Kaikki valot
     entities:
@@ -158,6 +134,8 @@ light:
     - light.makuuhuone
     - light.koristevalo
     - light.leikkihuone
+    - light.vierashuone
+    - light.suihku
     
 input_boolean:
   golf:
@@ -171,7 +149,9 @@ input_boolean:
   pumppu:
     name: Uima-allas pumppu
   awaymode:
-    name: Poissa tila
+    name: Pitkään poissa
+  flora:
+    name: Kasvivalot
 input_datetime:
   golf:
     name: Golf lämmitys aika
@@ -188,7 +168,18 @@ input_number:
     min: 19
     max: 25
     step: 0.5
-    icon: mdi:temperature-celsius
+    icon: mdi:temperature-celsius+
+input_select:
+  housestatus:
+    name: Talon tila
+    options: 
+      - Päivä
+      - Yö
+      - Hetken poissa
+      - Pitkään poissa
+    initial: Päivä
+    icon: mdi:home
+    
 # modbus:
   # name: enervent
   # type: serial
@@ -198,6 +189,11 @@ input_number:
   # stopbits: 1
   # bytesize: 8
   # parity: N
+  # timeout: 1
+  
+alarm_control_panel:
+  - platform: manual
+    code: '3180'
 timer:
   octavia:
     name: Octavia lämmitys jäljellä

@@ -46,16 +46,28 @@ olohuoneovet:
   controller: olohuone_ovet
   integration: deconz
   light: light.olohuone_ovet
-makuuhuone01:
+vierashuone01:
   module: controllerx
   class: E1810Controller
-  controller: makuuhuone01
+  controller: vierashuone01
   integration: deconz
-  light: light.makuuhuone
-makuuhuone02:
+  light: light.vierashuone
+vierashuone02:
   module: controllerx
   class: E1810Controller
-  controller: makuuhuone02
+  controller: vierashuone02
+  integration: deconz
+  light: light.vierashuone
+suihku:
+  module: controllerx
+  class: E1810Controller
+  controller: suihku
+  integration: deconz
+  light: light.suihku
+makuuhuone:
+  module: controllerx
+  class: E1810Controller
+  controller: makuuhuone
   integration: deconz
   light: light.makuuhuone
 replay_lights:
@@ -68,7 +80,7 @@ replay_lights:
   deviceType: "light"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot"
+  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot,light.kaikki_valot"
 replay_lights_switch:
   module: replay_lights
   class: ReplayLights
@@ -81,11 +93,42 @@ replay_lights_switch:
   enableVal: "on"
   excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf,switch.shelly_shsw_1_bcddc277746f_firmware_update,switch.shelly_shsw_1_bcddc27741be_firmware_update"
 EPrice:
-  module: pricefetch
-  class: PriceFetch
-# EnergyDevice:
-  # module: deviceoptimization
-  # class: Deviceoptimization
+  module: pricefetch2
+  class: PriceFetch2
+  #extracost: 6.69372
+  area: FI
+EnergyVaraaja:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: 4
+  entity_id: switch.varaaja
+  service_under: switch/turn_on
+  service_over: switch/turn_off
+EnergyPumppu:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: -4
+  entity_id: climate.pumppu
+  service_under: climate/turn_on
+  service_over: climate/turn_off
+  hoursBoost: 4
+  service_boost: climate/set_temperature
+  temperature: input_number.temperature
+  boost_amount: 1
+# EnergyFlora1:
+  # module: deviceoptimization2
+  # class: Deviceoptimization2
+  # hours: 10
+  # entity_id: group.kukkavalot
+  # service_under: switch/turn_on
+  # service_over: switch/turn_off
+# EnergyFlora2:
+  # module: deviceoptimization2
+  # class: Deviceoptimization2
+  # hours: 10
+  # entity_id: light.kukkavalo
+  # service_under: light/turn_on
+  # service_over: light/turn_off
 # enervent:
   # module: Enervent-eda
   # class: enervent_eda

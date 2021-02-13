@@ -33,6 +33,7 @@
   - service: climate.set_fan_mode
     data:
       entity_id: climate.pumppu
+      fan_mode: Auto
   - service: climate.set_temperature
     data_template:
       entity_id: climate.pumppu

@@ -48,7 +48,11 @@
       - type: memory_free
       - type: load_15m
       - type: processor_use
+  # - platform: rest
+    # resource: http://192.168.1.163:9090/summary
+    # name: Eda-bridge
   # - platform: modbus
+    # scan_interval: 30
     # registers:
     # - name: Raitisilma
       # hub: enervent
@@ -57,7 +61,15 @@
       # register: 6
       # scale: 0.1
       # precision: 1
-    # - name: Poistoilma
+    # - name: Tuloilma LTO
+      # hub: enervent
+      # unit_of_measurement: C
+      # slave: 1
+      # register_type: input
+      # register: 7
+      # scale: 0.1
+      # precision: 1
+   # - name: Poistoilma
       # hub: enervent
       # unit_of_measurement: C
       # slave: 1
@@ -69,12 +81,5 @@
       # unit_of_measurement: C
       # slave: 1
       # register: 8
-      # scale: 0.1
-      # precision: 1
-    # - name: Tuloilma LTO
-      # hub: enervent
-      # unit_of_measurement: C
-      # slave: 1
-      # register: 7
       # scale: 0.1
       # precision: 1
