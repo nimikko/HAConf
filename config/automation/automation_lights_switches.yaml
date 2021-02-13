@@ -331,7 +331,7 @@
   alias: Kasvivalo pois
   trigger:
   - platform: time
-    at: '18:30'
+    at: '18:00'
   - platform: state
     entity_id: input_boolean.flora
     to: 'off'
