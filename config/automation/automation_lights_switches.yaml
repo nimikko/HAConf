@@ -368,8 +368,21 @@
     platform: state
     entity_id: binary_sensor.presence_19
     to: 'on'
+  condition:
+  - condition: and
+    conditions:
+    - condition: time
+      after: '7:00:01'
+      before: '19:45:00'
+    - condition: state
+      entity_id: alarm_control_panel.ha_alarm
+      state:  
+        - armed_away
+        - armed_home
   action:
-  - service: notify.mobile_app_xt1562
+  - service: notify.mobile_app_huaweip9
     data:
-      title: 'Hälytys Joonakselle'
-      message: 'Huomio huomio liikettä havaittu'
+      message: TTS
+      title: Hälytys Joonakselle liikettä havaittu leikkihuoneessa. Tule heti paikalle.
+      data:
+        channel: alarm_stream
