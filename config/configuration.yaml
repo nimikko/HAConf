@@ -152,6 +152,10 @@ input_boolean:
     name: Pitkään poissa
   flora:
     name: Kasvivalot
+  shower:
+    name: Suihku pitää lämmittää
+  heating:
+    name: Lämmitystä tarvitaan
 input_datetime:
   golf:
     name: Golf lämmitys aika
@@ -159,6 +163,10 @@ input_datetime:
     has_time: true
   octavia:
     name: Octavia lämmitys aika
+    has_date: false
+    has_time: true
+  shower_duration:
+    name: Suihku lämmitysaika
     has_date: false
     has_time: true
 input_number:
@@ -179,7 +187,18 @@ input_select:
       - Pitkään poissa
     initial: Päivä
     icon: mdi:home
-    
+  househeating:
+    name: Talon lämmitys tila
+    options:
+      - Termostaatti
+      - Esto
+      - Pakko
+  showerheating:
+    name: Suihkun lämmitys tila
+    options:
+      - Termostaatti
+      - Esto
+      - Pakko
 # modbus:
   # name: enervent
   # type: serial
@@ -205,6 +224,9 @@ timer:
     name: Autotallin oven sulkeminen
   all_lights_off:
     name: kaikki valot pois
+  shower:
+    name: Suihku
+    duration:  "3:55:00"
 # Text to speech
 tts:
   - platform: google_translate

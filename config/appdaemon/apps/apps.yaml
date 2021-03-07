@@ -40,12 +40,6 @@ tyohuoneledpaneelit:
   controller: tyohuone_ledpaneelit
   integration: deconz
   light: light.tyohuone_ledpaneelit
-olohuoneovet:
-  module: controllerx
-  class: E1810Controller
-  controller: olohuone_ovet
-  integration: deconz
-  light: light.olohuone_ovet
 vierashuone01:
   module: controllerx
   class: E1810Controller
@@ -64,6 +58,12 @@ suihku:
   controller: suihku
   integration: deconz
   light: light.suihku
+isowc:
+  module: controllerx
+  class: E1810Controller
+  controller: isowc
+  integration: deconz
+  light: light.wc
 makuuhuone:
   module: controllerx
   class: E1810Controller
@@ -115,6 +115,24 @@ EnergyPumppu:
   service_boost: climate/set_temperature
   temperature: input_number.temperature
   boost_amount: 1
+EnergyShower:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: 4
+  entity_id: input_select.showerheating
+  selectvalueUnder: Termostaatti
+  selectvalueOver: Esto
+  timer: timer.shower
+  timer_duration: input_datetime.shower_duration
+  condition: input_boolean.showerheating
+EnergyHouseForce:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: 1
+  entity_id: input_select.househeating
+  selectvalueUnder: Pakko
+  selectvalueOver: Esto
+  condition: input_boolean.househeating
 # EnergyFlora1:
   # module: deviceoptimization2
   # class: Deviceoptimization2

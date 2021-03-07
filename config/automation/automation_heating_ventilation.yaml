@@ -89,3 +89,131 @@
     data_template:
       entity_id: climate.pumppu
       temperature: "{{states('input_number.temperature') |float}}"
+- id: Shower_used
+  alias: Suihkussa käyty
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.humidity_5
+    above: 60
+  action:
+  - service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.shower
+- id: Shower_heated
+  alias: Suihku lämmitetty
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.suihku
+  action:
+  - service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.shower
+  - service: input_datetime.set_datetime
+    target:
+      entity_id: input_datetime.shower
+    data:
+      time: "03:55:00"
+- id: Sauna_heated
+  alias: Sauna lämmitetty
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.sauna_temperature
+    above: 35
+  action:
+  - service: input_datetime.set_datetime
+    target:
+      entity_id: input_datetime.shower
+    data:
+      time: "01:55:00"
+- id: No_heating
+  alias: Pohjalaattaa ei lämmitetty
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    below: 26
+    for: "48:00:00"
+  action:
+  - service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.heating
+- id: shower_heating_block
+  alias: Suihkun lämmityksen esto
+  trigger:
+  - platform: state
+    entity_id: input_select.showerheating
+    to: Esto
+  action:
+  - service: switch.turn_on
+    data:
+      entity_id: switch.suihku_esto
+  - service: switch.turn_off
+    data:
+      entity_id: switch.suihku_termostaatti
+- id: shower_heating_thermostat
+  alias: Suihkun lämmitys termostaatti
+  trigger:
+  - platform: state
+    entity_id: input_select.showerheating
+    to: Termostaatti
+  action:
+  - service: switch.turn_on
+    data:
+      entity_id: switch.suihku_termostaatti
+  - service: switch.turn_off
+    data:
+      entity_id: switch.suihku_esto
+- id: shower_heating_force
+  alias: Suihkun lämmitys pakko
+  trigger:
+  - platform: state
+    entity_id: input_select.showerheating
+    to: Pakko
+  action:
+  - service: switch.turn_off
+    data:
+      entity_id: switch.suihku_termostaatti
+  - service: switch.turn_off
+    data:
+      entity_id: switch.suihku_esto
+- id: house_heating_block
+  alias: Talon lämmityksen esto
+  trigger:
+  - platform: state
+    entity_id: input_select.househeating
+    to: Esto
+  action:
+  - service: switch.turn_on
+    data:
+      entity_id: switch.talo_esto
+  - service: switch.turn_off
+    data:
+      entity_id: switch.talo_termostaatti
+- id: house_heating_thermostat
+  alias: Talon lämmitys termostaatti
+  trigger:
+  - platform: state
+    entity_id: input_select.househeating
+    to: Termostaatti
+  action:
+  - service: switch.turn_on
+    data:
+      entity_id: switch.talo_termostaatti
+  - service: switch.turn_off
+    data:
+      entity_id: switch.talo_esto
+- id: house_heating_force
+  alias: Talo lämmitys pakko
+  trigger:
+  - platform: state
+    entity_id: input_select.househeating
+    to: Pakko
+  action:
+  - service: switch.turn_off
+    data:
+      entity_id: switch.talo_termostaatti
+  - service: switch.turn_off
+    data:
+      entity_id: switch.talo_esto
+
