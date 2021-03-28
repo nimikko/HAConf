@@ -80,7 +80,7 @@ replay_lights:
   deviceType: "light"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot,light.kaikki_valot"
+  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot,light.kaikki_valot,light.light_17,light.light_19,light.light_15,light.light_22"
 replay_lights_switch:
   module: replay_lights
   class: ReplayLights
@@ -91,12 +91,13 @@ replay_lights_switch:
   deviceType: "switch"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf,switch.shelly_shsw_1_bcddc277746f_firmware_update,switch.shelly_shsw_1_bcddc27741be_firmware_update"
+  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf,switch.shelly_shsw_1_bcddc277746f_firmware_update,switch.shelly_shsw_1_bcddc27741be_firmware_update,switch.talo_esto,switch.talo_termostaatti,switch.suihku_esto,switch.suihku_termostaatti"
 EPrice:
   module: pricefetch2
   class: PriceFetch2
   #extracost: 6.69372
   area: FI
+  priority: 1
 EnergyVaraaja:
   module: deviceoptimization2
   class: Deviceoptimization2
@@ -123,8 +124,8 @@ EnergyShower:
   selectvalueUnder: Termostaatti
   selectvalueOver: Esto
   timer: timer.shower
-  timer_duration: input_datetime.shower_duration
-  condition: input_boolean.showerheating
+  timerduration: input_datetime.shower_duration
+  condition: input_boolean.shower
 EnergyHouseForce:
   module: deviceoptimization2
   class: Deviceoptimization2
@@ -132,7 +133,8 @@ EnergyHouseForce:
   entity_id: input_select.househeating
   selectvalueUnder: Pakko
   selectvalueOver: Esto
-  condition: input_boolean.househeating
+  condition: input_boolean.heating
+  dependencies: EPrice
 # EnergyFlora1:
   # module: deviceoptimization2
   # class: Deviceoptimization2

@@ -336,28 +336,6 @@
     entity_id: group.kukkavalot
   - service: light.turn_off
     entity_id: light.kukkavalo
-- id: bathroom_floralightsoff
-  alias: Vessan kasvivalopois
-  trigger:
-    platform: state
-    entity_id: switch.peilikaappi
-    to: 'on'
-  action:
-  - service: switch.turn_off
-    entity_id: switch.p1
-- id: bathroom_floralightson
-  alias: Vessan kasvivalopois
-  trigger:
-    platform: state
-    entity_id: switch.peilikaappi
-    to: 'off'
-  condition:
-  - condition: time
-    after: '9:30:01'
-    before: '18:30:00'
-  action:
-  - service: switch.turn_on
-    entity_id: switch.p1
 - id: Notification
   alias: Ilmoitus liikkeestä
   trigger:

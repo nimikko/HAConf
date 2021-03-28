@@ -193,12 +193,14 @@ input_select:
       - Termostaatti
       - Esto
       - Pakko
+    icon: mdi:home
   showerheating:
     name: Suihkun lämmitys tila
     options:
       - Termostaatti
       - Esto
       - Pakko
+    icon: mdi:shower
 # modbus:
   # name: enervent
   # type: serial

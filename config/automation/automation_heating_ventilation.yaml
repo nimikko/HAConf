@@ -112,7 +112,7 @@
       entity_id: input_boolean.shower
   - service: input_datetime.set_datetime
     target:
-      entity_id: input_datetime.shower
+      entity_id: input_datetime.shower_duration
     data:
       time: "03:55:00"
 - id: Sauna_heated
@@ -124,7 +124,7 @@
   action:
   - service: input_datetime.set_datetime
     target:
-      entity_id: input_datetime.shower
+      entity_id: input_datetime.shower_duration
     data:
       time: "01:55:00"
 - id: No_heating
