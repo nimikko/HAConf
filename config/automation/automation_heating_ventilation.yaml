@@ -105,7 +105,7 @@
   - platform: event
     event_type: timer.finished
     event_data:
-      entity_id: timer.suihku
+      entity_id: timer.shower
   action:
   - service: input_boolean.turn_off
     data:
