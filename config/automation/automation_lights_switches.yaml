@@ -13,6 +13,10 @@
     entity_id: sun.sun
     attribute: elevation
     below: 0.1
+  - alias: "Vain päivisin"
+    condition: time
+    after: "07:00:00"
+    before: "23:00:00"
   action:
   - service: switch.turn_on
     entity_id: group.koristevalot
@@ -327,7 +331,7 @@
   alias: Kasvivalo pois
   trigger:
   - platform: time
-    at: '18:00'
+    at: '17:00'
   - platform: state
     entity_id: input_boolean.flora
     to: 'off'

@@ -3,7 +3,7 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.takka_temperature
-    above: 38
+    above: 40
   action:
   - service: climate.set_hvac_mode
     data:
@@ -94,7 +94,7 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.humidity_5
-    above: 60
+    above: 75
   action:
   - service: input_boolean.turn_on
     data:
@@ -132,8 +132,8 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.takka_temperature
-    below: 26
-    for: "48:00:00"
+    below: 30
+    for: "24:00:00"
   action:
   - service: input_boolean.turn_on
     data:

@@ -51,16 +51,7 @@
   # - platform: rest
     # resource: http://192.168.1.163:9090/summary
     # name: Eda-bridge
-  # - platform: modbus
-    # scan_interval: 30
-    # registers:
-    # - name: Raitisilma
-      # hub: enervent
-      # unit_of_measurement: C
-      # slave: 1
-      # register: 6
-      # scale: 0.1
-      # precision: 1
+
     # - name: Tuloilma LTO
       # hub: enervent
       # unit_of_measurement: C

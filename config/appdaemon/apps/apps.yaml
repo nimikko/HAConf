@@ -80,7 +80,7 @@ replay_lights:
   deviceType: "light"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot,light.kaikki_valot,light.light_17,light.light_19,light.light_15,light.light_22"
+  excludeList: "light.isowc1,light.isowc2,light.isowc3,light.isowc4,light.isowc5,light.isowc6,light.olohuone_kaikki_valot,light.tyohuone_kaikki_valot,light.kaikki_valot,light.light_17,light.light_19,light.light_15,light.light_22,light.wc,light.light_18,light.light_20,light.light_21,light.light_16,light.light_14"
 replay_lights_switch:
   module: replay_lights
   class: ReplayLights
@@ -105,17 +105,19 @@ EnergyVaraaja:
   entity_id: switch.varaaja
   service_under: switch/turn_on
   service_over: switch/turn_off
+  limitruntime: "19:59:50"
+  hourslimit: 22
 EnergyPumppu:
   module: deviceoptimization2
   class: Deviceoptimization2
-  hours: -4
+  hours: -8
   entity_id: climate.pumppu
   service_under: climate/turn_on
   service_over: climate/turn_off
-  hoursBoost: 4
+  hoursBoost: 6
   service_boost: climate/set_temperature
   temperature: input_number.temperature
-  boost_amount: 1
+  boost_amount: -1
 EnergyShower:
   module: deviceoptimization2
   class: Deviceoptimization2
@@ -126,6 +128,11 @@ EnergyShower:
   timer: timer.shower
   timerduration: input_datetime.shower_duration
   condition: input_boolean.shower
+  dynamicentity: input_boolean.shower
+  hourslimit: 9
+  awayhours: 2
+  awayid: input_select.housestatus
+  awaystatus: Pitkään poissa
 EnergyHouseForce:
   module: deviceoptimization2
   class: Deviceoptimization2
@@ -134,7 +141,21 @@ EnergyHouseForce:
   selectvalueUnder: Pakko
   selectvalueOver: Esto
   condition: input_boolean.heating
-  dependencies: EPrice
+  awayhours: 2
+  awayid: input_select.housestatus
+  awaystatus: Pitkään poissa
+EnergyPalju:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: -12
+  entity_id: switch.palju
+  service_under: switch/turn_on
+  service_over: switch/turn_off
+Automover:
+  module: automover
+  class: Automover
+  weatherid: weather.lappi
+  automover: vacuum.husqvarna_automower_r_315x_automower
 # EnergyFlora1:
   # module: deviceoptimization2
   # class: Deviceoptimization2

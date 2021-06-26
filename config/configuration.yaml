@@ -38,6 +38,11 @@ recorder:
     entities:
       - sun.sun
       - sensor.time
+logger:
+  default: warning
+  logs:
+    homeassistant.components.modbus: debug
+    pymodbus.client: debug
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
@@ -202,16 +207,24 @@ input_select:
       - Pakko
     icon: mdi:shower
 # modbus:
-  # name: enervent
-  # type: serial
-  # method: rtu
-  # port: /dev/ttyUSB0
-  # baudrate: 19200
-  # stopbits: 1
-  # bytesize: 8
-  # parity: N
-  # timeout: 1
-  
+#   name: enervent
+#   close_comm_on_error: true
+#   delay: 0
+#   type: serial
+#   method: rtu
+#   port: /dev/ttyUSB0
+#   baudrate: 19200
+#   stopbits: 1
+#   bytesize: 8
+#   parity: N
+#   timeout: 2
+#   sensors:
+#     - name: Raitisilma
+#       unit_of_measurement: C
+#       slave: 0
+#       address: 6
+#       scale: 0.1
+#       precision: 1
 alarm_control_panel:
   - platform: manual
     code: '3180'
