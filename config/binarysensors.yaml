@@ -12,6 +12,8 @@
         value_template: "{{ is_state('sensor.octavia_10',states('sensor.time')|string) }}"
       octavia_20b:
         value_template: "{{ is_state('sensor.octavia_20',states('sensor.time')|string) }}"
+      palju:
+        value_template: "{{ states('sensor.ulko_temperature')|float>8 }}"
   - platform: mqtt
     name: "Autotallin ovi"
     state_topic: "garage/door/1/status"

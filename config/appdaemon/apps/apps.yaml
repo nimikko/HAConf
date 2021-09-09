@@ -70,6 +70,36 @@ makuuhuone:
   controller: makuuhuone
   integration: deconz
   light: light.makuuhuone
+kaytava_ala:
+  module: controllerx
+  class: E1810Controller
+  controller: kaytava_ala
+  integration: deconz
+  light: light.kaytava_ala
+kaytava_yla:
+  module: controllerx
+  class: E1810Controller
+  controller: kaytava_ala
+  integration: deconz
+  light: light.kaytava_yla
+pikkuwc:
+  module: controllerx
+  class: E1810Controller
+  controller: pikku_wc
+  integration: deconz
+  light: light.color_temperature_light_60
+eteinen:
+  module: controllerx
+  class: E1810Controller
+  controller: valoteteinen
+  integration: deconz
+  light: light.valoteteinen
+takaverho:
+  module: controllerx
+  class: E1766CoverController
+  controller: takaovi_verho
+  integration: deconz
+  cover: cover.window_covering_device_59
 replay_lights:
   module: replay_lights
   class: ReplayLights
@@ -91,7 +121,7 @@ replay_lights_switch:
   deviceType: "switch"
   enableTag: "input_boolean.awaymode"
   enableVal: "on"
-  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf,switch.shelly_shsw_1_bcddc277746f_firmware_update,switch.shelly_shsw_1_bcddc27741be_firmware_update,switch.talo_esto,switch.talo_termostaatti,switch.suihku_esto,switch.suihku_termostaatti"
+  excludeList: "switch.shelly_shsw_1_bcddc277746f,switch.patteri,switch.octavia,switch.golf,switch.shelly_shsw_1_bcddc277746f_firmware_update,switch.shelly_shsw_1_bcddc27741be_firmware_update,switch.talo_esto,switch.talo_termostaatti,switch.suihku_esto,switch.suihku_termostaatti,switch.palju"
 EPrice:
   module: pricefetch2
   class: PriceFetch2
@@ -117,7 +147,7 @@ EnergyPumppu:
   hoursBoost: 6
   service_boost: climate/set_temperature
   temperature: input_number.temperature
-  boost_amount: -1
+  boost_amount: 1
 EnergyShower:
   module: deviceoptimization2
   class: Deviceoptimization2
@@ -147,6 +177,7 @@ EnergyHouseForce:
 EnergyPalju:
   module: deviceoptimization2
   class: Deviceoptimization2
+  condition: binary_sensor.palju
   hours: -12
   entity_id: switch.palju
   service_under: switch/turn_on
@@ -155,21 +186,34 @@ Automover:
   module: automover
   class: Automover
   weatherid: weather.lappi
-  automover: vacuum.husqvarna_automower_r_315x_automower
-# EnergyFlora1:
-  # module: deviceoptimization2
-  # class: Deviceoptimization2
-  # hours: 10
-  # entity_id: group.kukkavalot
-  # service_under: switch/turn_on
-  # service_over: switch/turn_off
-# EnergyFlora2:
-  # module: deviceoptimization2
-  # class: Deviceoptimization2
-  # hours: 10
-  # entity_id: light.kukkavalo
-  # service_under: light/turn_on
-  # service_over: light/turn_off
+  automover: vacuum.automower_r_315x_automower
+EnergyFlora1:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: 7
+  timelimitlower: 7
+  timelimitupper: 19
+  entity_id: group.kukkavalot
+  service_under: switch/turn_on
+  service_over: switch/turn_off
+EnergyFlora2:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: 7
+  timelimitlower: 7
+  timelimitupper: 19
+  entity_id: light.kukkavalo
+  service_under: light/turn_on
+  service_over: light/turn_off
+EnergyFlora3:
+  module: deviceoptimization2
+  class: Deviceoptimization2
+  hours: 6
+  timelimitlower: 9
+  timelimitupper: 18
+  entity_id: group.kukkavalot_late
+  service_under: switch/turn_on
+  service_over: switch/turn_off
 # enervent:
   # module: Enervent-eda
   # class: enervent_eda

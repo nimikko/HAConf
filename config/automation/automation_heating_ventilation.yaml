@@ -216,4 +216,3 @@
   - service: switch.turn_off
     data:
       entity_id: switch.talo_esto
-

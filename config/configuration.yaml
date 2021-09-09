@@ -155,8 +155,6 @@ input_boolean:
     name: Uima-allas pumppu
   awaymode:
     name: Pitkään poissa
-  flora:
-    name: Kasvivalot
   shower:
     name: Suihku pitää lämmittää
   heating:

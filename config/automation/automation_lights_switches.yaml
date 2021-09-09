@@ -20,10 +20,6 @@
   action:
   - service: switch.turn_on
     entity_id: group.koristevalot
-  - service: switch.turn_on
-    entity_id: switch.p2
-  - service: switch.turn_on
-    entity_id: switch.p11
 - id: decoration_lights_off
   alias: Valot pois klo 23 ja aamulla kun aurinko on noussut
   trigger:
@@ -36,16 +32,6 @@
   action:
   - service: switch.turn_off
     entity_id: group.koristevalot
-- id: decoration_lights_guest_off
-  alias: Vierashuoneen valot pois klo 22
-  trigger:
-  - platform: time
-    at: '22:10'
-  action:
-  - service: switch.turn_off
-    entity_id: switch.p2
-  - service: switch.turn_off
-    entity_id: switch.p11
 - id: Evening_scene_on
   alias: Olohuoneen valot himmeälle illala
   trigger:
@@ -95,8 +81,8 @@
   action:
   - service: light.turn_on
     data:
-      entity_id: light.koristevalo
-      brightness: 10
+      entity_id: light.color_temperature_light_60
+      brightness: 1
 - id: Bathroom_light_off
   alias: Vessan valot pois
   trigger:
@@ -107,29 +93,7 @@
       minutes: 5
   action:
   - service: light.turn_off
-    entity_id: light.koristevalo
-- id: Playroom_light
-  alias: Leikkihuoneen valot
-  trigger:
-    platform: state
-    entity_id: binary_sensor.presence_19
-    to: 'on'
-  action:
-  - service: light.turn_on
-    data:
-      entity_id: light.leikkihuone
-      brightness: 200
-- id: Playroom_light_off
-  alias: Leikkihuoneen valot pois
-  trigger:
-    platform: state
-    entity_id: binary_sensor.presence_19
-    to: 'off'
-    for:
-      minutes: 15
-  action:
-  - service: light.turn_off
-    entity_id: light.leikkihuone
+    entity_id: light.color_temperature_light_60
 - id: Bathroom_lights
   alias: Ison vessan valot
   trigger:
@@ -138,30 +102,26 @@
     event_data:
       id: xiami_nappi
       event: 1002
-  condition:
-  - condition: time
-    after: '6:00:00'
-    before: '21:00:00'
   action:
   - service: switch.toggle
     entity_id: switch.peilikaappi
-- id: Bathroom_lights_night
-  alias: Ison vessan valot yöllä
-  trigger:
-    platform: event
-    event_type: deconz_event
-    event_data:
-      id: isowc
-      event: 1002
-  condition:
-  - condition: time
-    after: '21:00:01'
-    before: '05:59:59'
-  action:
-  - service: light.toggle
-    data:
-      entity_id: light.Isowc1
-      brightness: 1
+# - id: Bathroom_lights_night
+#   alias: Ison vessan valot yöllä
+#   trigger:
+#     platform: event
+#     event_type: deconz_event
+#     event_data:
+#       id: isowc
+#       event: 1002
+#   condition:
+#   - condition: time
+#     after: '21:00:01'
+#     before: '05:59:59'
+#   action:
+#   - service: light.toggle
+#     data:
+#       entity_id: light.Isowc1
+#       brightness: 1
 - id: hallway_lights
   alias: Käytävän valot
   trigger:
@@ -238,7 +198,7 @@
       event: 1002
   action:
   - service: switch.toggle
-    entity_id: switch.eteinen
+    entity_id: switch.vaatehuone
 - id: laundryroom_lights
   alias: Kodinhoitohuoneen valot
   trigger:
@@ -314,32 +274,6 @@
   action:
   - service: switch.turn_off
     entity_id: switch.makuuhuone
-- id: flora_lights_on
-  alias: Kasvivalo päälle
-  trigger:
-  - platform: time
-    at: '10:00'
-  - platform: state
-    entity_id: input_boolean.flora
-    to: 'on'
-  action:
-  - service: switch.turn_on
-    entity_id: group.kukkavalot
-  - service: light.turn_on
-    entity_id: light.kukkavalo
-- id: flora_lights_off
-  alias: Kasvivalo pois
-  trigger:
-  - platform: time
-    at: '17:00'
-  - platform: state
-    entity_id: input_boolean.flora
-    to: 'off'
-  action:
-  - service: switch.turn_off
-    entity_id: group.kukkavalot
-  - service: light.turn_off
-    entity_id: light.kukkavalo
 - id: Notification
   alias: Ilmoitus liikkeestä
   trigger:
@@ -364,3 +298,31 @@
       title: Hälytys Joonakselle liikettä havaittu leikkihuoneessa. Tule heti paikalle.
       data:
         channel: alarm_stream
+- id: Smartlock
+  alias: Älylukko auki
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: smartlock
+      event: 1002
+  action:
+  - alias: "Avaa etuovi"
+    service: lock.unlock
+    target:
+      entity_id: lock.etuovi
+    data:
+      code: !secret lock_code
+- id: Smartlock_lock
+  alias: Älylukko lukkoon
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: smartlock
+      event: 2002
+  action:
+  - alias: "Lukitse etuovi"
+    service: lock.lock
+    target:
+      entity_id: lock.etuovi

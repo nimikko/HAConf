@@ -6,17 +6,21 @@ koristevalot:
     - switch.olohuone2
     - switch.keittio
     - switch.tyohuone
-    - switch.p8
     - switch.p9
-    - switch.p12
     - switch.p13
-    - switch.p14
+    - switch.p2
 kukkavalot:
   name: Kukkavalot
   entities:
     - switch.p15
     - switch.p1
-
+    - switch.wc_kukkavalo
+    - switch.p14
+    - switch.p8
+kukkavalot_late:
+  name: kukkavalot myöhemmin
+    - switch.p12
+    - switch.p11
 autotallinovet:
   name: Autotallin ovet
   entities:
@@ -27,7 +31,7 @@ autotallinovet:
 vanhat_valot:
   name: Vanhat valot
   entities:
-    - switch.eteinen #Eteinen
+    - switch.vaatehuone #Eteinen
     - switch.kaytava
     - switch.peilikaappi #Peilivalo
     - switch.kodinhoitohuone    # Kodinhoitohuone
