@@ -19,6 +19,7 @@ kukkavalot:
     - switch.p8
 kukkavalot_late:
   name: kukkavalot myöhemmin
+  entities:
     - switch.p12
     - switch.p11
 autotallinovet:
