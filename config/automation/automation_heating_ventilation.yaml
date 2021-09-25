@@ -96,9 +96,14 @@
     entity_id: sensor.humidity_5
     above: 75
   action:
-  - service: input_boolean.turn_on
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.showerheating
     data:
-      entity_id: input_boolean.shower
+      option: Termostaatti
+  - service: timer.start
+    target:
+      entity_id: timer.shower
 - id: Shower_heated
   alias: Suihku lämmitetty
   trigger:
@@ -107,9 +112,11 @@
     event_data:
       entity_id: timer.shower
   action:
-  - service: input_boolean.turn_off
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.showerheating
     data:
-      entity_id: input_boolean.shower
+      option: Esto
   - service: input_datetime.set_datetime
     target:
       entity_id: input_datetime.shower_duration

@@ -148,32 +148,32 @@ EnergyPumppu:
   service_boost: climate/set_temperature
   temperature: input_number.temperature
   boost_amount: 1
-EnergyShower:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  hours: 4
-  entity_id: input_select.showerheating
-  selectvalueUnder: Termostaatti
-  selectvalueOver: Esto
-  timer: timer.shower
-  timerduration: input_datetime.shower_duration
-  condition: input_boolean.shower
-  dynamicentity: input_boolean.shower
-  hourslimit: 9
-  awayhours: 2
-  awayid: input_select.housestatus
-  awaystatus: Pitkään poissa
-EnergyHouseForce:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  hours: 1
-  entity_id: input_select.househeating
-  selectvalueUnder: Pakko
-  selectvalueOver: Esto
-  condition: input_boolean.heating
-  awayhours: 2
-  awayid: input_select.housestatus
-  awaystatus: Pitkään poissa
+# EnergyShower:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   hours: 4
+#   entity_id: input_select.showerheating
+#   selectvalueUnder: Termostaatti
+#   selectvalueOver: Esto
+#   timer: timer.shower
+#   timerduration: input_datetime.shower_duration
+#   condition: input_boolean.shower
+#   dynamicentity: input_boolean.shower
+#   hourslimit: 9
+#   awayhours: 2
+#   awayid: input_select.housestatus
+#   awaystatus: Pitkään poissa
+# EnergyHouseForce:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   hours: 1
+#   entity_id: input_select.househeating
+#   selectvalueUnder: Pakko
+#   selectvalueOver: Esto
+#   condition: input_boolean.heating
+#   awayhours: 2
+#   awayid: input_select.housestatus
+#   awaystatus: Pitkään poissa
 EnergyPalju:
   module: deviceoptimization2
   class: Deviceoptimization2
