@@ -28,10 +28,35 @@
   - platform: numeric_state
     entity_id: sun.sun
     attribute: elevation
-    above: 0.2
+    above: -0.9
   action:
   - service: switch.turn_off
     entity_id: group.koristevalot
+- id: Flora_lights_on
+  alias: Kukkavalot päälle 
+  trigger:
+  - platform: template
+    value_template: >
+      {{ is_state('sensor.time', '08:00' if is_state('binary_sensor.workday_sensor', 'off') else '07:00') }}
+  action:
+  - service: switch.turn_on
+    entity_id: group.kukkavalot
+  - service: switch.turn_on
+    entity_id: group.kukkavalot_late
+  - service: light.turn_on
+    entity_id: light.kukkavalot
+- id: Flora_lights_off
+  alias: Kukkavalot pois 
+  trigger:
+  - platform: time
+    at: '16:00'
+  action:
+  - service: switch.turn_off
+    entity_id: group.kukkavalot
+  - service: switch.turn_off
+    entity_id: group.kukkavalot_late
+  - service: light.turn_off
+    entity_id: light.kukkavalot
 - id: Evening_scene_on
   alias: Olohuoneen valot himmeälle illala
   trigger:
@@ -50,38 +75,19 @@
       entity_id: media_player.samsung_tv_remote
       volume_level: 0
 - id: Bathroom_light
-  alias: Pikkuvessan valot
+  alias: Vessan valot
   trigger:
     platform: state
     entity_id: binary_sensor.presence_9
     to: 'on'
   condition:
   - condition: time
-    after: '6:00:01'
-    before: '23:30:00'
-  - condition: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
-    below: 5
-  action:
-  - service: light.turn_on
-    data:
-      entity_id: light.koristevalo
-      brightness: 150
-- id: Bathroom_light_night
-  alias: Pikkuvessan valot yöllä
-  trigger:
-    platform: state
-    entity_id: binary_sensor.presence_9
-    to: 'on'
-  condition:
-  - condition: time
-    after: '23:30:01'
+    after: '22:00:01'
     before: '06:00:00'
   action:
   - service: light.turn_on
     data:
-      entity_id: light.color_temperature_light_60
+      entity_id: light.koristevalo
       brightness: 1
 - id: Bathroom_light_off
   alias: Vessan valot pois
@@ -93,7 +99,7 @@
       minutes: 5
   action:
   - service: light.turn_off
-    entity_id: light.color_temperature_light_60
+    entity_id: light.koristevalo
 - id: Bathroom_lights
   alias: Ison vessan valot
   trigger:
@@ -165,7 +171,7 @@
     event_type: deconz_event
     event_data:
       id: eteinen
-      event: 4002
+      event: 1002
   action:
   - service: timer.start
     data:
@@ -188,14 +194,29 @@
     entity_id: group.vanhat_valot
   - service: light.turn_off
     entity_id: light.kaikki_valot
-- id: frontroom_lights
-  alias: Eteisen valot
+- id: storage_lights
+  alias: Vaatehuoneen valot
   trigger:
   - platform: event
     event_type: deconz_event
     event_data:
-      id: eteinen
-      event: 1002
+      id: kodinhoitohuone2
+      event: 3002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: kodinhoitohuone2
+      event: 2002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: kodinhoitohuone2
+      event: 4002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: kodinhoitohuone2
+      event: 5002
   action:
   - service: switch.toggle
     entity_id: switch.vaatehuone
@@ -206,6 +227,11 @@
     event_type: deconz_event
     event_data:
       id: kodinhoitohuone
+      event: 1002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: kodinhoitohuone2
       event: 1002
   action:
   - service: switch.toggle

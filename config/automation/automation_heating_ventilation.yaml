@@ -102,6 +102,8 @@
     data:
       option: Termostaatti
   - service: timer.start
+    data:
+      duration: "{{ states('input_datetime.shower_duration')}}"
     target:
       entity_id: timer.shower
 - id: Shower_heated

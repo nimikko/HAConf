@@ -115,18 +115,6 @@ cover:
     device_class: garage
 light:
   - platform: group
-    name: Olohuone kaikki valot
-    entities:
-    - light.olohuone_iso
-    - light.olohuone_pieni
-    - light.olohuone_ovet
-  - platform: group
-    name: Tyohuone kaikki valot
-    entities:
-    - light.tyohuone
-    - light.tyohuone_lednauha
-    - light.tyohuone_ledpaneelit
-  - platform: group
     name: Kaikki valot
     entities:
     - light.tyohuone_lednauha
@@ -138,9 +126,16 @@ light:
     - light.wc
     - light.makuuhuone
     - light.koristevalo
-    - light.leikkihuone
-    - light.vierashuone
+    - light.tyohuonem
+    - light.tyohuonet
     - light.suihku
+    - light.kaytava_ala
+    - light.kaytava_yla
+  - platform: group
+    name: kukka valot
+    entities:
+    - light.kukkavalo
+    - light.kukkaledlistat 
     
 input_boolean:
   golf:

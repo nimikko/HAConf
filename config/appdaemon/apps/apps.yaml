@@ -22,12 +22,12 @@ olohuoneovet:
   controller: olohuone_ovet
   integration: deconz
   light: light.olohuone_ovet
-leikkihuone:
+tyohuonem:
   module: controllerx
   class: E1810Controller
-  controller: leikkihuone
+  controller: tyohuonem
   integration: deconz
-  light: light.leikkihuone
+  light: light.tyohuonem
 tyohuonelednauhat:
   module: controllerx
   class: E1810Controller
@@ -45,13 +45,13 @@ vierashuone01:
   class: E1810Controller
   controller: vierashuone01
   integration: deconz
-  light: light.vierashuone
+  light: light.tyohuonet
 vierashuone02:
   module: controllerx
   class: E1810Controller
   controller: vierashuone02
   integration: deconz
-  light: light.vierashuone
+  light: light.tyohuonet
 suihku:
   module: controllerx
   class: E1810Controller
@@ -144,10 +144,10 @@ EnergyPumppu:
   entity_id: climate.pumppu
   service_under: climate/turn_on
   service_over: climate/turn_off
-  hoursBoost: 6
-  service_boost: climate/set_temperature
+#  hoursBoost: 6
+#  service_boost: climate/set_temperature
   temperature: input_number.temperature
-  boost_amount: 1
+#  boost_amount: 1
 # EnergyShower:
 #   module: deviceoptimization2
 #   class: Deviceoptimization2
@@ -174,46 +174,46 @@ EnergyPumppu:
 #   awayhours: 2
 #   awayid: input_select.housestatus
 #   awaystatus: Pitkään poissa
-EnergyPalju:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  condition: binary_sensor.palju
-  hours: -12
-  entity_id: switch.palju
-  service_under: switch/turn_on
-  service_over: switch/turn_off
-Automover:
-  module: automover
-  class: Automover
-  weatherid: weather.lappi
-  automover: vacuum.automower_r_315x_automower
-EnergyFlora1:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  hours: 7
-  timelimitlower: 7
-  timelimitupper: 19
-  entity_id: group.kukkavalot
-  service_under: switch/turn_on
-  service_over: switch/turn_off
-EnergyFlora2:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  hours: 7
-  timelimitlower: 7
-  timelimitupper: 19
-  entity_id: light.kukkavalo
-  service_under: light/turn_on
-  service_over: light/turn_off
-EnergyFlora3:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  hours: 6
-  timelimitlower: 9
-  timelimitupper: 18
-  entity_id: group.kukkavalot_late
-  service_under: switch/turn_on
-  service_over: switch/turn_off
+# EnergyPalju:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   condition: binary_sensor.palju
+#   hours: -12
+#   entity_id: switch.palju
+#   service_under: switch/turn_on
+#   service_over: switch/turn_off
+# Automover:
+#   module: automover
+#   class: Automover
+#   weatherid: weather.lappi
+#   automover: vacuum.automower_r_315x_automower
+# EnergyFlora1:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   hours: 7
+#   timelimitlower: 7
+#   timelimitupper: 19
+#   entity_id: group.kukkavalot
+#   service_under: switch/turn_on
+#   service_over: switch/turn_off
+# EnergyFlora2:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   hours: 7
+#   timelimitlower: 7
+#   timelimitupper: 19
+#   entity_id: light.kukkavalo
+#   service_under: light/turn_on
+#   service_over: light/turn_off
+# EnergyFlora3:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   hours: 6
+#   timelimitlower: 9
+#   timelimitupper: 18
+#   entity_id: group.kukkavalot_late
+#   service_under: switch/turn_on
+#   service_over: switch/turn_off
 # enervent:
   # module: Enervent-eda
   # class: enervent_eda
