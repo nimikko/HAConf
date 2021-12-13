@@ -11,6 +11,9 @@ koristevalot:
     - switch.p2
     - switch.takapiha
     - switch.etupiha
+    - switch.p16
+    - switch.p17
+    - switch.p18
 kukkavalot:
   name: Kukkavalot
   entities:
