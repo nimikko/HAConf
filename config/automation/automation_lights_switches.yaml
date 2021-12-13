@@ -162,8 +162,10 @@
       id: keittio
       event: 3002
   action:
-  - service: switch.toggle
-    entity_id: switch.kaytava
+  - service: light.toggle
+    entity_id: light.kaytava_yla
+  - service: light.toggle
+    entity_id: light.kaytava_ala    
 - id: all_lights_off_timer
   alias: Valot pois ajastin
   trigger:

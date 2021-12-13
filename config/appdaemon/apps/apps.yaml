@@ -137,16 +137,16 @@ EnergyVaraaja:
   service_over: switch/turn_off
   limitruntime: "19:59:50"
   hourslimit: 22
-EnergyPumppu:
-  module: deviceoptimization2
-  class: Deviceoptimization2
-  hours: -8
-  entity_id: climate.pumppu
-  service_under: climate/turn_on
-  service_over: climate/turn_off
-#  hoursBoost: 6
-#  service_boost: climate/set_temperature
-  temperature: input_number.temperature
+# EnergyPumppu:
+#   module: deviceoptimization2
+#   class: Deviceoptimization2
+#   hours: -8
+#   entity_id: climate.pumppu
+#   service_under: climate/turn_on
+#   service_over: climate/turn_off
+# #  hoursBoost: 6
+# #  service_boost: climate/set_temperature
+#   temperature: input_number.temperature
 #  boost_amount: 1
 # EnergyShower:
 #   module: deviceoptimization2
