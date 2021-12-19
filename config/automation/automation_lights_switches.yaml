@@ -207,6 +207,11 @@
   - platform: event
     event_type: deconz_event
     event_data:
+      id: vaatehuone2
+      event: 1002
+  - platform: event
+    event_type: deconz_event
+    event_data:
       id: kodinhoitohuone2
       event: 2002
   - platform: event

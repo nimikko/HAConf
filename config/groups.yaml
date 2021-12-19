@@ -2,7 +2,7 @@ koristevalot:
   name: Koristevalot
   entities:
     - switch.p7
-    - switch.olohuone1
+    - switch.p4
     - switch.olohuone2
     - switch.keittio
     - switch.tyohuone
@@ -14,6 +14,8 @@ koristevalot:
     - switch.p16
     - switch.p17
     - switch.p18
+    - switch.p6
+    - switch.p19
 kukkavalot:
   name: Kukkavalot
   entities:
@@ -38,7 +40,6 @@ vanhat_valot:
   name: Vanhat valot
   entities:
     - switch.vaatehuone
-    - switch.kaytava
     - switch.peilikaappi #Peilivalo
     - switch.kodinhoitohuone    # Kodinhoitohuone
     - switch.sauna
