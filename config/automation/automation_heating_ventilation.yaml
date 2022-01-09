@@ -145,8 +145,95 @@
     for: "24:00:00"
   action:
   - service: input_boolean.turn_on
-    data:
+    target:
       entity_id: input_boolean.heating
+- id: Fireplace_cold
+  alias: Takka kylmä
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    below: 9
+    for: "00:10:00"
+  - platform: numeric_state
+    entity_id: sensor.2_olohuone
+    below: 18
+    for: "00:10:00"
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_select.housestatus
+        state: "Pitkään poissa"
+  action:
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.househeating
+    data:
+      option: Termostaatti
+- id: House warm
+  alias: Talo lämmin
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.takka_temperature
+    above: 20
+    for: "00:20:00"
+  - platform: numeric_state
+    entity_id: sensor.2_olohuone
+    above: 21
+    for: "00:10:00"
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_select.housestatus
+        state: "Pitkään poissa"
+      - condition: numeric_state
+        entity_id: sensor.2_olohuone
+        above: 20
+  action:
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.househeating
+    data:
+      option: Esto
+- id: sauna_cold
+  alias: Sauna kylmä
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.sauna_temperature
+    below: 17
+    for: "00:10:00"
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_select.housestatus
+        state: "Pitkään poissa"
+  action:
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.showerheating
+    data:
+      option: Termostaatti
+- id: sauna_not_cold
+  alias: Sauna lämmitys pois
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.sauna_temperature
+    above: 18
+    for: "00:10:00"
+  condition:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: input_select.housestatus
+        state: "Pitkään poissa"
+  action:
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.showerheating
+    data:
+      option: Esto
 - id: shower_heating_block
   alias: Suihkun lämmityksen esto
   trigger:

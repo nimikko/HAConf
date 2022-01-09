@@ -13,13 +13,14 @@
     entity_id: sun.sun
     attribute: elevation
     below: 0.1
-  - alias: "Vain päivisin"
-    condition: time
+  - condition: time
     after: "07:00:00"
     before: "23:00:00"
   action:
   - service: switch.turn_on
     entity_id: group.koristevalot
+  - service: switch.turn_on
+    entity_id: group.pihavalot
 - id: decoration_lights_off
   alias: Valot pois klo 23 ja aamulla kun aurinko on noussut
   trigger:
@@ -32,6 +33,8 @@
   action:
   - service: switch.turn_off
     entity_id: group.koristevalot
+  - service: switch.turn_off
+    entity_id: group.pihavalot
 - id: Flora_lights_on
   alias: Kukkavalot päälle 
   trigger:
