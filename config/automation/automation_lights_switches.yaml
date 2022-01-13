@@ -131,8 +131,8 @@
 #     data:
 #       entity_id: light.Isowc1
 #       brightness: 1
-- id: hallway_lights
-  alias: Käytävän valot
+- id: hallway_lights_on
+  alias: Käytävän valot päälle
   trigger:
   - platform: event
     event_type: deconz_event
@@ -142,32 +142,40 @@
   - platform: event
     event_type: deconz_event
     event_data:
+      id: ruokahuone
+      event: 2002
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: keittio
+      event: 2002
+  action:
+  - service: light.turn_on
+    entity_id: light.kaytava_yla
+  - service: light.turn_on
+    entity_id: light.kaytava_ala    
+- id: hallway_lights_off
+  alias: Käytävän valot pois
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
       id: eteinen
       event: 3002
   - platform: event
     event_type: deconz_event
     event_data:
       id: ruokahuone
-      event: 2002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: ruokahuone
       event: 3002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: keittio
-      event: 2002
   - platform: event
     event_type: deconz_event
     event_data:
       id: keittio
       event: 3002
   action:
-  - service: light.toggle
+  - service: light.turn_off
     entity_id: light.kaytava_yla
-  - service: light.toggle
+  - service: light.turn_off
     entity_id: light.kaytava_ala    
 - id: all_lights_off_timer
   alias: Valot pois ajastin
