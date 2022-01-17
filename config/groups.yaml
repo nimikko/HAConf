@@ -27,6 +27,7 @@ kukkavalot:
     - switch.wc_kukkavalo
     - switch.p14
     - switch.p8
+    - switch.sakaravalo
 kukkavalot_late:
   name: kukkavalot myöhemmin
   entities:
