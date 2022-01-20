@@ -19,6 +19,22 @@
   action:
   - service: switch.turn_on
     entity_id: group.koristevalot
+- id: decoration_lights_outside_on
+  alias: Ulkovalot päälle ennen aurinkolaskua
+  trigger:
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: 0
+  condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: 0.1
+  - condition: time
+    after: "15:00:00"
+    before: "23:00:00"
+  action:
   - service: switch.turn_on
     entity_id: group.pihavalot
 - id: decoration_lights_off
