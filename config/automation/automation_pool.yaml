@@ -1,44 +1,36 @@
-- id: pool_heating_on
-  alias: Aurinkokenno on lämmin
+- id: palju_on
+  alias: Palju päälle
   trigger:
-  - platform: template
-    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float}}'
-  - platform: time_pattern
-    minutes: '/10'
+  - platform: time
+    at: "12:01:00"
   condition:
-  - condition: time
-    after: '9:00:00'
-    before: '19:00:00'
   - condition: state
-    entity_id: input_boolean.pumppu
-    state: 'off'
-  - condition: template
-    value_template: '{{ states(''sensor.aurinkenno_temperature'')|float +1 > states(''sensor.uima_allas_temperature'')|float}}'
+    entity_id: input_select.housestatus
+    state: "Päivä"
   action:
-  - service: input_boolean.turn_on
-    data:
-      entity_id: input_boolean.pumppu
   - service: switch.turn_on
-    entity_id: switch.patteri
-- id: pool_heating_off
-  alias: Aurinkokenno jäähdyttää
+    entity_id: switch.suodatin
+  - service: switch.turn_on
+    entity_id: switch.lammitin
+- id: palju_off
+  alias: Palju pois
   trigger:
-  - platform: template
-    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float}}'
-  - platform: time_pattern
-    minutes: '/5'
-  condition:
-  - condition: time
-    after: '9:00:00'
-    before: '21:00:00'
-  - condition: template
-    value_template: '{{ states(''sensor.uima_allas_tulo_temperature'')|float < states(''sensor.uima_allas_temperature'')|float}}'
-  - condition: state
-    entity_id: input_boolean.pumppu
-    state: 'on'
+  - platform: time
+    at: "20:00:00"
   action:
-  - service: input_boolean.turn_off
-    data:
-      entity_id: input_boolean.pumppu
   - service: switch.turn_off
-    entity_id: switch.patteri
+    entity_id: switch.suodatin
+  - service: switch.turn_off
+    entity_id: switch.lammitin
+- id: palju_on_away
+  alias: Palju päälle lomalla
+  trigger:
+  - platform: time
+    at: "19:01:00"
+  condition:
+  - condition: state
+    entity_id: input_select.housestatus
+    state: "Pitkään poissa"
+  action:
+  - service: switch.turn_on
+    entity_id: switch.suodatin

@@ -253,3 +253,6 @@
   action:
   - service: cover.open_cover
     entity_id: cover.autotallin_ovi
+  - service: timer.cancel
+    target:
+      entity_id: timer.garagedooropen

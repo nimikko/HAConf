@@ -68,7 +68,7 @@
   alias: Kukkavalot pois 
   trigger:
   - platform: time
-    at: '16:00'
+    at: '18:00'
   action:
   - service: switch.turn_off
     entity_id: group.kukkavalot
@@ -386,3 +386,36 @@
     service: lock.lock
     target:
       entity_id: lock.etuovi
+- id: Sauna_lights_auto_off
+  alias: Saunanvalot pois 
+  trigger:
+  - platform: state
+    entity_id: switch.sauna
+    from: "off"
+    to: "on"
+    for: "04:00:00"
+  action:
+  - service: switch.turn_off
+    entity_id: switch.sauna
+- id: Closet_lights_auto_off
+  alias: Vaatehuone valot pois 
+  trigger:
+  - platform: state
+    entity_id: switch.vaatehuone
+    from: "off"
+    to: "on"
+    for: "02:00:00"
+  action:
+  - service: switch.turn_off
+    entity_id: switch.vaatehuone
+- id: Utility_lights_auto_off
+  alias: Kodinhoitohuone valot pois 
+  trigger:
+  - platform: state
+    entity_id: switch.kodinhoitohuone
+    from: "off"
+    to: "on"
+    for: "02:00:00"
+  action:
+  - service: switch.turn_off
+    entity_id: switch.kodinhoitohuone

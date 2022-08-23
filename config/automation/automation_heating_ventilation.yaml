@@ -29,7 +29,7 @@
   - service: climate.set_hvac_mode
     data:
       entity_id: climate.pumppu
-      hvac_mode: heat
+      hvac_mode: "{% if (is_state('input_select.heatingmode','Jäähdytys')) %}cool{% else %}heat{% endif %}"
   - service: climate.set_fan_mode
     data:
       entity_id: climate.pumppu
@@ -45,7 +45,7 @@
     at: '23:30'
   condition:
   - condition: template
-    value_template:  "{{ states('sensor.temperature_4') |float > states('input_number.temperature') |float +2 }}"
+    value_template:  "{{ states('sensor.2_olohuone') |float > states('input_number.temperature') |float +1 }}"
   action:
   - service: climate.turn_on
     entity_id: climate.pumppu
@@ -56,35 +56,31 @@
   - service: climate.set_temperature
     data_template:
       entity_id: climate.pumppu
-      temperature: "{{states('input_number.temperature') |float -2}}"
-- id: heatpump_off_morning
-  alias: Pumppu  pois aamulla
+      temperature: "{{states('input_number.temperature') |float -1}}"
+- id: heatpump_off
+  alias: Pumppu pois
   trigger:
   - platform: time
-    at: '05:50'
+    at: '05:00'
   action:
   - service: climate.turn_off
     entity_id: climate.pumppu
-- id: heatpump_off_evening
-  alias: Pumppu  pois illalla
+- id: heatpump_on
+  alias: Pumppu päälle
   trigger:
   - platform: time
-    at: '23:30'
-  action:
-  - service: climate.turn_off
-    entity_id: climate.pumppu
-- id: heatpump_to_heating_morning
-  alias: Pumppu lämmitykselle aamulla
-  trigger:
-  - platform: time
-    at: '8:30'
+    at: '6:55'
+  - platform: state
+    entity_id: input_number.temperature
+  - platform: state
+    entity_id: input_select.heatingmode
   action:
   - service: climate.turn_on
     entity_id: climate.pumppu
   - service: climate.set_hvac_mode
     data:
       entity_id: climate.pumppu
-      hvac_mode: heat
+      hvac_mode: "{% if (is_state('input_select.heatingmode','Jäähdytys')) %}cool{% else %}heat{% endif %}"
   - service: climate.set_temperature
     data_template:
       entity_id: climate.pumppu
@@ -95,6 +91,10 @@
   - platform: numeric_state
     entity_id: sensor.humidity_5
     above: 75
+  condition:
+  - condition: state
+    entity_id: timer.shower
+    state: "idle"    
   action:
   - service: input_select.select_option
     target:
@@ -136,17 +136,37 @@
       entity_id: input_datetime.shower_duration
     data:
       time: "01:55:00"
-- id: No_heating
-  alias: Pohjalaattaa ei lämmitetty
+# - id: No_heating
+#   alias: Pohjalaattaa ei lämmitetty
+#   trigger:
+#   - platform: numeric_state
+#     entity_id: sensor.takka_temperature
+#     below: 30
+#     for: "24:00:00"
+#   action:
+#   - service: input_boolean.turn_on
+#     target:
+#       entity_id: input_boolean.heating
+- alias: Force_house_heating
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.takka_temperature
-    below: 30
-    for: "24:00:00"
+  - platform: time
+    at: "03:00:00"
   action:
-  - service: input_boolean.turn_on
+  - service: input_select.select_option
+    data:
+      option: Pakko
     target:
-      entity_id: input_boolean.heating
+      entity_id: input_select.housestatus
+- alias: Force_house_heating_off
+  trigger:
+  - platform: time
+    at: "04:00:00"
+  action:
+  - service: input_select.select_option
+    data:
+      option: Esto
+    target:
+      entity_id: input_select.housestatus
 - id: Fireplace_cold
   alias: Takka kylmä
   trigger:
@@ -312,3 +332,99 @@
   - service: switch.turn_off
     data:
       entity_id: switch.talo_esto
+- id: ventilation_inflow_temp
+  alias: Ilmanvaihto tulo ohjaukselle
+  trigger:
+  - platform: state
+    entity_id: input_select.ventilation
+    to: Tuloilma
+  - platform: state
+    entity_id: input_number.temperature
+  - platform: state
+    entity_id: input_select.heatingmode
+    to: Lämmitys
+  condition:
+  - condition: state
+    entity_id: input_select.heatingmode
+    state: Lämmitys
+  - condition: state
+    entity_id: input_select.ventilation
+    state: Tuloilma
+  action:
+  - service: modbus.write_register
+    data:
+      value: 1
+      hub: enervent
+      slave: 1
+      address: 136
+  - service: modbus.write_register
+    data:
+      value: "{{(states('input_number.temperature') |int -2)*10}}"
+      hub: enervent
+      slave: 1
+      address: 135
+  - service: modbus.write_coil
+    data:
+      state: 1
+      hub: enervent
+      slave: 1
+      address: 54
+- id: ventilation_outflow_temp
+  alias: Ilmanvaihto poisto ohjaukselle
+  trigger:
+  - platform: state
+    entity_id: input_select.ventilation
+    to: Poistoilma
+  - platform: state
+    entity_id: input_select.heatingmode
+  - platform: state
+    entity_id: input_number.temperature
+  condition:
+  - condition: state
+    entity_id: input_select.ventilation
+    state: "Poistoilma"
+  action:
+  - service: modbus.write_register
+    data:
+      value: 2
+      hub: enervent
+      slave: 1
+      address: 136
+  - service: modbus.write_register
+    data:
+      value: "{% if (is_state('input_select.heatingmode','Jäähdytys')) %}{{(states('input_number.temperature') |int -2)*10}}{% else %}{{(states('input_number.temperature') |int +2)*10}}{% endif %}"
+      hub: enervent
+      slave: 1
+      address: 135
+  - service: modbus.write_coil
+    data:
+      state: 0
+      hub: enervent
+      slave: 1
+      address: 54
+- id: ventilation_to_inflow_temp
+  alias: Ilmanvaihto lämmitykselle
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.air_ventilation_hrc_supply_air_temperature
+    below: 12
+    for: "00:10:00"
+  action:
+  - service: input_select.select_option
+    data:
+      option: Tuloilma
+    target:
+      entity_id: input_select.ventilation
+- id: ventilation_to_outflow_temp
+  alias: Ilmanvaihto lämmitys pois
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.air_ventilation_hrc_supply_air_temperature
+    above: 13
+    for: "00:10:00"
+  action:
+  - service: input_select.select_option
+    data:
+      option: Poistoilma
+    target:
+      entity_id: input_select.ventilation

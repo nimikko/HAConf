@@ -1,0 +1,37 @@
+
+  sensor:
+    - name: golf_0
+      state: >
+        {%if (state_attr('input_datetime.golf', 'minute') | int >= 30) %}
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int, state_attr('input_datetime.golf', 'minute') | int -30) }}
+        {% else %}
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -1, state_attr('input_datetime.golf', 'minute') | int +30) }}
+        {% endif %}
+    - name: golf_10
+      state: >   
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -1, state_attr('input_datetime.golf', 'minute') | int) }}
+    - name: golf_20
+      state: >  
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -2, state_attr('input_datetime.golf', 'minute') | int) }}
+    - name: octavia_0
+      state: >
+        {%if (state_attr('input_datetime.octavia', 'minute') | int >= 30) %}
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int, state_attr('input_datetime.octavia', 'minute') | int -30) }}
+        {% else %}
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -1, state_attr('input_datetime.octavia', 'minute') | int +30) }}
+        {% endif %}
+    - name: octavia_10
+      state: > 
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -1, state_attr('input_datetime.octavia', 'minute') | int) }}
+    - name: octavia_20
+      state: >  
+          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.octavia', 'hour') | int -2, state_attr('input_datetime.octavia', 'minute') | int) }}
+    - name: energy_hour
+      device_class: energy
+      unit_of_measurement: kWh
+      state: >
+        {% if is_number(states('sensor.hourly_energy_a')) and is_number(states('sensor.hourly_energy_b')) and is_number(states('sensor.hourly_energy_c')) and is_number(states('sensor.hourly_energy_a_ret')) and is_number(states('sensor.hourly_energy_b_ret')) and is_number(states('sensor.hourly_energy_c_ret')) %}
+          {{ states('sensor.hourly_energy_a') | float + states('sensor.hourly_energy_b') | float + states('sensor.hourly_energy_c') | float + states('sensor.hourly_energy_a_ret') | float + states('sensor.hourly_energy_b_ret') | float + states('sensor.hourly_energy_c_ret') | float }}
+        {% else %}
+          None
+        {% endif %}

@@ -135,8 +135,8 @@ light:
     name: kukkavalot
     entities:
     - light.kukkavalo
-    - light.kukkaledlistat 
-    
+    - light.kukkaledlistat
+    - light.tyohuone_lednauha2
 input_boolean:
   golf:
     name: Golf automaatti
@@ -199,25 +199,18 @@ input_select:
       - Esto
       - Pakko
     icon: mdi:shower
-# modbus:
-#   name: enervent
-#   close_comm_on_error: true
-#   delay: 0
-#   type: serial
-#   method: rtu
-#   port: /dev/ttyUSB0
-#   baudrate: 19200
-#   stopbits: 1
-#   bytesize: 8
-#   parity: N
-#   timeout: 2
-#   sensors:
-#     - name: Raitisilma
-#       unit_of_measurement: C
-#       slave: 0
-#       address: 6
-#       scale: 0.1
-#       precision: 1
+  ventilation:
+    name: Envervent lämpötila
+    options:
+      - Tuloilma
+      - Poistoilma
+  heatingmode:
+    name: Lämmityksen tila
+    options:
+      - Lämmitys
+      - Jäähdytys
+    icon: mdi:thermostat 
+modbus: !include modbus.yaml
 alarm_control_panel:
   - platform: manual
     code: '3180'
@@ -238,11 +231,31 @@ timer:
 # Text to speech
 tts:
   - platform: google_translate
-media_player:
-  - platform: samsungtv_tizen
-    host: !secret tv_host
-    port: 8002
-    mac: 40:16:3b:0f:c9:95
+# media_player:
+#   - platform: samsungtv_tizen
+#     host: !secret tv_host
+#     port: 8002
+#     mac: 40:16:3b:0f:c9:95
 group: !include groups.yaml
 automation: !include_dir_merge_list automation/
 script: !include scripts.yaml
+template: !include template.yaml
+utility_meter:
+  hourly_energy_a:
+    source: sensor.shellyem3_bcff4dfd1132_channel_a_energy
+    cycle: hourly
+  hourly_energy_b:
+    source: sensor.shellyem3_bcff4dfd1132_channel_b_energy
+    cycle: hourly
+  hourly_energy_c:
+    source: sensor.shellyem3_bcff4dfd1132_channel_c_energy
+    cycle: hourly
+  hourly_energy_a_ret:
+    source: sensor.shellyem3_bcff4dfd1132_channel_a_energy_returned
+    cycle: hourly
+  hourly_energy_b_ret:
+    source: sensor.shellyem3_bcff4dfd1132_channel_b_energy_returned
+    cycle: hourly
+  hourly_energy_c_ret:
+    source: sensor.shellyem3_bcff4dfd1132_channel_c_energy_returned
+    cycle: hourly
