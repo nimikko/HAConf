@@ -1,3 +1,4 @@
+#Takan polttaminen
 - id: fireplace_fan_on
   alias: Puhallus päälle kun takka on päällä
   trigger:
@@ -13,6 +14,11 @@
     data:
       entity_id: climate.pumppu
       fan_mode: LowMid
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.showerheating
+    data:
+      option: Esto
 - id: fireplace_fan_off
   alias: Puhallus pois kun takka on kylmä
   trigger:
@@ -24,12 +30,10 @@
   condition:
   - condition: state
     entity_id: climate.pumppu
-    state: fan_only
+    state: 
+     - "fan_only"
+     - "off"
   action:
-  - service: climate.set_hvac_mode
-    data:
-      entity_id: climate.pumppu
-      hvac_mode: "{% if (is_state('input_select.heatingmode','Jäähdytys')) %}cool{% else %}heat{% endif %}"
   - service: climate.set_fan_mode
     data:
       entity_id: climate.pumppu
@@ -38,6 +42,11 @@
     data_template:
       entity_id: climate.pumppu
       temperature: "{{states('input_number.temperature') |float}}"
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.pumppu
+      hvac_mode: "{% if (is_state('input_select.heatingmode','Jäähdytys')) %}cool{% else %}heat{% endif %}"
+#Pumppu viilennykselle illalla
 - id: heatpump_to_cooling_evening
   alias: Pumppu viilennykselle illalla
   trigger:
@@ -46,6 +55,9 @@
   condition:
   - condition: template
     value_template:  "{{ states('sensor.2_olohuone') |float > states('input_number.temperature') |float +1 }}"
+  - condition: state
+    entity_id: input_select.heatingmode
+    state: Jäähdytys
   action:
   - service: climate.turn_on
     entity_id: climate.pumppu
@@ -57,23 +69,43 @@
     data_template:
       entity_id: climate.pumppu
       temperature: "{{states('input_number.temperature') |float -1}}"
-- id: heatpump_off
-  alias: Pumppu pois
-  trigger:
-  - platform: time
-    at: '05:00'
-  action:
-  - service: climate.turn_off
-    entity_id: climate.pumppu
+# - id: heatpump_off
+#   alias: Pumppu pois
+#   trigger:
+#   - platform: template
+#     value_template: >
+#       {{ states('sensor.2_olohuone') |float > states('input_number.temperature') |float +1.5 }}
+#   - platform: state
+#     entity_id: climate.pumppu
+#     from: 'fan_only'
+#     to: 'heat'
+#   condition:
+#   - condition: state
+#     entity_id: climate.pumppu
+#     state: 'heat'
+#   - condition: template
+#     value_template: >
+#       {{ states('sensor.2_olohuone') |float > states('input_number.temperature') |float +0.5 }}
+#   - condition: template
+#     value_template: >
+#       {{ states('sensor.limitbclimate_pumppu') | float < states('sensor.spot_cost') | float}}
+#   action:
+#   - service: climate.turn_off
+#     entity_id: climate.pumppu
 - id: heatpump_on
   alias: Pumppu päälle
   trigger:
-  - platform: time
-    at: '6:55'
   - platform: state
     entity_id: input_number.temperature
   - platform: state
     entity_id: input_select.heatingmode
+  - platform: template
+    value_template: >
+      {{ states('sensor.2_olohuone') |float < states('input_number.temperature') |float -1 }}
+  condition:
+  - condition: template
+    value_template: >
+      {{ states('sensor.2_olohuone') |float < states('input_number.temperature') |float +0.5 }}
   action:
   - service: climate.turn_on
     entity_id: climate.pumppu
@@ -89,12 +121,15 @@
   alias: Suihkussa käyty
   trigger:
   - platform: numeric_state
-    entity_id: sensor.humidity_5
+    entity_id: sensor.anturisuihku_humidity
     above: 75
   condition:
   - condition: state
     entity_id: timer.shower
     state: "idle"    
+  - condition: numeric_state
+    entity_id: sensor.takka_temperature
+    below: 40
   action:
   - service: input_select.select_option
     target:
@@ -136,6 +171,37 @@
       entity_id: input_datetime.shower_duration
     data:
       time: "01:55:00"
+  - service: climate.set_temperature
+    data:
+      temperature: 30
+    target:
+      entity_id: climate.enervent
+  - service: modbus.write_coil
+    data:
+      state: 0
+      hub: enervent
+      slave: 1
+      address: 54
+  - service: modbus.write_register
+    data:
+      value: 2
+      hub: enervent
+      slave: 1
+      address: 136
+- id: Sauna_cooled_down
+  alias: Sauna jäähtynyt
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.sauna_temperature
+    below: 26
+    for:
+      minutes: 10
+  action:
+  - service: climate.set_temperature
+    data:
+      temperature: "{% if (is_state('input_select.heatingmode','Jäähdytys')) %}{{(states('input_number.temperature') |int -2)}}{% else %}{{(states('input_number.temperature') |int +2)}}{% endif %}"
+    target:
+      entity_id: climate.enervent
 # - id: No_heating
 #   alias: Pohjalaattaa ei lämmitetty
 #   trigger:
@@ -147,26 +213,28 @@
 #   - service: input_boolean.turn_on
 #     target:
 #       entity_id: input_boolean.heating
-- alias: Force_house_heating
-  trigger:
-  - platform: time
-    at: "03:00:00"
-  action:
-  - service: input_select.select_option
-    data:
-      option: Pakko
-    target:
-      entity_id: input_select.housestatus
-- alias: Force_house_heating_off
-  trigger:
-  - platform: time
-    at: "04:00:00"
-  action:
-  - service: input_select.select_option
-    data:
-      option: Esto
-    target:
-      entity_id: input_select.housestatus
+# - alias: Force_house_heating
+#   trigger:
+#   - platform: time
+#     at: "03:00:00"
+#   action:
+#   - service: input_select.select_option
+#     data:
+#       option: Pakko
+#     target:
+#       entity_id: input_select.housestatus
+# - alias: Force_house_heating_off
+#   trigger:
+#   - platform: time
+#     at: "04:00:00"
+#   action:
+#   - service: input_select.select_option
+#     data:
+#       option: Esto
+#     target:
+#       entity_id: input_select.housestatus
+
+# Poissa olo automattikka
 - id: Fireplace_cold
   alias: Takka kylmä
   trigger:
@@ -254,6 +322,7 @@
       entity_id: input_select.showerheating
     data:
       option: Esto
+## Takan suihkun lämmityksen ohjaus
 - id: shower_heating_block
   alias: Suihkun lämmityksen esto
   trigger:
@@ -293,6 +362,7 @@
   - service: switch.turn_off
     data:
       entity_id: switch.suihku_esto
+# Takan talon lämmityksen ohjaus
 - id: house_heating_block
   alias: Talon lämmityksen esto
   trigger:
@@ -332,6 +402,7 @@
   - service: switch.turn_off
     data:
       entity_id: switch.talo_esto
+# Ilmanvaihdon ohjaus
 - id: ventilation_inflow_temp
   alias: Ilmanvaihto tulo ohjaukselle
   trigger:
@@ -407,8 +478,8 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.air_ventilation_hrc_supply_air_temperature
-    below: 12
-    for: "00:10:00"
+    below: 14
+    for: "00:05:00"
   action:
   - service: input_select.select_option
     data:
@@ -420,8 +491,8 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.air_ventilation_hrc_supply_air_temperature
-    above: 13
-    for: "00:10:00"
+    above: 15
+    for: "00:05:00"
   action:
   - service: input_select.select_option
     data:

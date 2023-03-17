@@ -1,0 +1,45 @@
+  binary_sensor:
+    - name: "Autotallin ovi"
+      state_topic: "garage/door/1/status"
+      payload_on: "open"
+      payload_off: "closed"
+      availability_topic: "GarHAge/availability"
+      device_class: garage_door
+      qos: 0
+    - name: "Sivuovi"
+      state_topic: "garage/door/2/status"
+      payload_on: "open"
+      payload_off: "closed"
+      availability_topic: "GarHAge/availability"
+      device_class: door
+      qos: 0     
+    - name: "Kylmavarasto"
+      state_topic: "garage/door/3/status"
+      payload_on: "open"
+      payload_off: "closed"
+      availability_topic: "GarHAge/availability"
+      device_class: door
+      qos: 0  
+    - name: "Puutarhavarasto"
+      state_topic: "garage/door/4/status"
+      payload_on: "open"
+      payload_off: "closed"
+      availability_topic: "GarHAge/availability"
+      device_class: door
+      qos: 0
+  cover:
+    - name: "Autotallin ovi"
+      state_topic: "garage/door/1/status"
+      command_topic: "garage/door/1/action"
+      availability_topic: "GarHAge/availability"
+      qos: 0
+      optimistic: false
+      retain: false
+      payload_open: "OPEN"
+      payload_close: "CLOSE"
+      payload_stop: "STATE"
+      state_open: "open"
+      state_closed: "closed"
+      payload_available: "online"
+      payload_not_available: "offline"
+      device_class: garage  

@@ -1,21 +1,23 @@
 koristevalot:
   name: Koristevalot
   entities:
-    - switch.p7
     - switch.p4
     - switch.olohuone2
-    - switch.keittio
+    - switch.p3
     - switch.p9
     - switch.p13
     - switch.p2
-    - switch.p17
-
     - switch.p6
-    - switch.p19
+    - switch.p16
+    - switch.p10
+    - swiich.p5
+    - switch.p18
 pihavalot:
  name: Pihavalot
  entities:
     - switch.takapiha
+    - switch.etupiha
+    - switch.ajopiha
 kukkavalot:
   name: Kukkavalot
   entities:
@@ -24,14 +26,15 @@ kukkavalot:
     - switch.wc_kukkavalo
     - switch.p14
     - switch.p8
-    - switch.p16
-    - switch.p18
     - switch.p12
     - switch.tkukkavalot
-kukkavalot_late:
-  name: kukkavalot myöhemmin
-  entities:
     - switch.p11
+    - switch.p19
+    - switch.p17
+# kukkavalot_late:
+#   name: kukkavalot myöhemmin
+#   entities:
+   
 autotallinovet:
   name: Autotallin ovet
   entities:

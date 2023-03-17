@@ -1,18 +1,5 @@
 
   sensor:
-    - name: golf_0
-      state: >
-        {%if (state_attr('input_datetime.golf', 'minute') | int >= 30) %}
-          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int, state_attr('input_datetime.golf', 'minute') | int -30) }}
-        {% else %}
-          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -1, state_attr('input_datetime.golf', 'minute') | int +30) }}
-        {% endif %}
-    - name: golf_10
-      state: >   
-          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -1, state_attr('input_datetime.golf', 'minute') | int) }}
-    - name: golf_20
-      state: >  
-          {{ '%0.02d:%0.02d' | format(state_attr('input_datetime.golf', 'hour') | int -2, state_attr('input_datetime.golf', 'minute') | int) }}
     - name: octavia_0
       state: >
         {%if (state_attr('input_datetime.octavia', 'minute') | int >= 30) %}
@@ -32,6 +19,33 @@
       state: >
         {% if is_number(states('sensor.hourly_energy_a')) and is_number(states('sensor.hourly_energy_b')) and is_number(states('sensor.hourly_energy_c')) and is_number(states('sensor.hourly_energy_a_ret')) and is_number(states('sensor.hourly_energy_b_ret')) and is_number(states('sensor.hourly_energy_c_ret')) %}
           {{ states('sensor.hourly_energy_a') | float + states('sensor.hourly_energy_b') | float + states('sensor.hourly_energy_c') | float + states('sensor.hourly_energy_a_ret') | float + states('sensor.hourly_energy_b_ret') | float + states('sensor.hourly_energy_c_ret') | float }}
+        {% else %}
+          None
+        {% endif %}
+    - name: power_grid_net
+      device_class: power
+      unit_of_measurement: W
+      state: >
+        {% if is_number(states('sensor.shellyem3_bcff4dfd1132_channel_a_power')) and is_number(states('sensor.shellyem3_bcff4dfd1132_channel_b_power')) and is_number(states('sensor.shellyem3_bcff4dfd1132_channel_c_power')) %}
+          {{ states('sensor.shellyem3_bcff4dfd1132_channel_a_power') | float + states('sensor.shellyem3_bcff4dfd1132_channel_b_power') | float + states('sensor.shellyem3_bcff4dfd1132_channel_c_power')| float}}
+        {% else %}
+          None
+        {% endif %}
+    - name: power_used
+      device_class: power
+      unit_of_measurement: W
+      state: >
+        {% if is_number(states('sensor.power_grid_net')) and is_number(states('sensor.solarh_483000_real_power')) %}
+          {{ states('sensor.solarh_483000_real_power') | float + states('sensor.power_grid_net') | float }}
+        {% else %}
+          None
+        {% endif %}
+    - name: car_energy
+      device_class: power
+      unit_of_measurement: kWh
+      state: >
+        {% if is_number(states('sensor.go_echarger_202759_eto')) %}
+          {{ states('sensor.go_echarger_202759_eto') | float /1000}}
         {% else %}
           None
         {% endif %}

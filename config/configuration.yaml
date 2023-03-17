@@ -12,20 +12,7 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Helsinki
-  # Customization file
-  customize_glob:
-    "sensor.golf_*":
-      hidden: true
-    "binary_sensor.golf_*":
-      hidden: true
-    "sensor.octavia_*":
-      hidden: true
-    "binary_sensor.octavia_*":
-      hidden: true
-    "input_boolean.octavia_*":
-      hidden: true
-    "input_boolean.golf_*":
-      hidden: true  
+  country: FI
   auth_mfa_modules:
     - type: totp
       name: Authenticator app
@@ -40,9 +27,6 @@ recorder:
       - sensor.time
 logger:
   default: warning
-  logs:
-    homeassistant.components.modbus: debug
-    pymodbus.client: debug
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 # http:
@@ -96,38 +80,23 @@ notify:
     platform: telegram
     chat_id: !secret telegram_chat1
   
-cover:
-  - platform: mqtt
-    name: "Autotallin ovi"
-    state_topic: "garage/door/1/status"
-    command_topic: "garage/door/1/action"
-    availability_topic: "GarHAge/availability"
-    qos: 0
-    optimistic: false
-    retain: false
-    payload_open: "OPEN"
-    payload_close: "CLOSE"
-    payload_stop: "STATE"
-    state_open: "open"
-    state_closed: "closed"
-    payload_available: "online"
-    payload_not_available: "offline"
-    device_class: garage
+mqtt: !include mqtt.yaml
 light:
   - platform: group
     name: Kaikki valot
     entities:
     - light.tyohuone_lednauha
     - light.tyohuone_ledpaneelit
-    - light.tyohuone
-    - light.olohuone_iso
-    - light.olohuone_pieni
+    - light.joonaskatto
+    - light.olohuoneiso
+    - light.olohuonepieni
     - light.olohuone_ovet
     - light.wc
+    - light.valopikkuwc
     - light.makuuhuone
     - light.koristevalo
-    - light.tyohuonem
-    - light.tyohuonet
+    - light.mikkokatto
+    - light.tyttikatto
     - light.suihku
     - light.kaytava_ala
     - light.kaytava_yla
@@ -135,30 +104,34 @@ light:
     name: kukkavalot
     entities:
     - light.kukkavalo
-    - light.kukkaledlistat
+    - light.valoolohuonekukkaled
     - light.tyohuone_lednauha2
 input_boolean:
-  golf:
-    name: Golf automaatti
-    icon: mdi:car
-  golf_s:
+  enyaqautomaatti:
+    name: Enyaq automaatti lataus
+    icon: mdi:ev-station
+  enyaqmanuaali:
+    name: Enyaq manuaali lataus
+    icon: mdi:ev-station
   octavia:
     name: Octavia automaatti
     icon: mdi:car
-  octavia_s:
-  pumppu:
-    name: Uima-allas pumppu
   awaymode:
     name: Pitkään poissa
   shower:
     name: Suihku pitää lämmittää
   heating:
     name: Lämmitystä tarvitaan
+  flora:
+    name: Kukkavalot
+    icon: mdi:flower
 input_datetime:
-  golf:
-    name: Golf lämmitys aika
+  enyaq:
+    name: Enyaq valmis
     has_date: false
     has_time: true
+    initial: 07:00
+    icon: mdi:mdi-electric-car
   octavia:
     name: Octavia lämmitys aika
     has_date: false
@@ -170,8 +143,8 @@ input_datetime:
 input_number:
   temperature:
     name: Lämpötila
-    initial: 22
-    min: 19
+    initial: 20
+    min: 18
     max: 25
     step: 0.5
     icon: mdi:temperature-celsius+
@@ -217,8 +190,6 @@ alarm_control_panel:
 timer:
   octavia:
     name: Octavia lämmitys jäljellä
-  golf:
-    name: Golf lämmitys jäljellä
   garagedooropen:
     name: Autotallin oven avaus
   garagedoorclose:
@@ -259,3 +230,6 @@ utility_meter:
   hourly_energy_c_ret:
     source: sensor.shellyem3_bcff4dfd1132_channel_c_energy_returned
     cycle: hourly
+  car_energy:
+    source: sensor.car_energy
+    cycle: monthly

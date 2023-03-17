@@ -14,40 +14,7 @@
         value_template: "{{ is_state('sensor.octavia_20',states('sensor.time')|string) }}"
       palju:
         value_template: "{{ states('sensor.ulko_temperature')|float>8 }}"
-  - platform: mqtt
-    name: "Autotallin ovi"
-    state_topic: "garage/door/1/status"
-    payload_on: "open"
-    payload_off: "closed"
-    availability_topic: "GarHAge/availability"
-    device_class: garage_door
-    qos: 0
-
-  - platform: mqtt
-    name: "Sivuovi"
-    state_topic: "garage/door/2/status"
-    payload_on: "open"
-    payload_off: "closed"
-    availability_topic: "GarHAge/availability"
-    device_class: door
-    qos: 0  
-    
-  - platform: mqtt
-    name: "Kylmavarasto"
-    state_topic: "garage/door/3/status"
-    payload_on: "open"
-    payload_off: "closed"
-    availability_topic: "GarHAge/availability"
-    device_class: door
-    qos: 0  
-  
-  - platform: mqtt
-    name: "Puutarhavarasto"
-    state_topic: "garage/door/4/status"
-    payload_on: "open"
-    payload_off: "closed"
-    availability_topic: "GarHAge/availability"
-    device_class: door
-    qos: 0  
+      sisaheatneeded:
+        value_template: "{{ states('sensor.2_olohuone') |float < states('input_number.temperature') |float }}"
   - platform: workday
     country: FI

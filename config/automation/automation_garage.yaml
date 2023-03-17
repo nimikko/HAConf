@@ -1,95 +1,3 @@
-- id: golf_heating_on
-  alias: Golf lämmitys
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.golf_0b
-    to: 'on'
-  - platform: state
-    entity_id: binary_sensor.golf_10b
-    to: 'on'
-  - platform: state
-    entity_id: binary_sensor.golf_20b
-    to: 'on'
-  - platform: state
-    entity_id: switch.golf
-    to: 'on'
-  condition:
-    condition: or
-    conditions:
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: switch.golf
-        state: 'on'
-      - condition: state
-        entity_id: timer.golf
-        state: idle
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.golf_0b
-        state: 'on'
-      - condition: numeric_state
-        entity_id: sensor.autotalli_temperature
-        below: 10
-      - condition: state
-        entity_id: input_boolean.golf
-        state: 'on'
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.golf_10b
-        state: 'on'
-      - condition: numeric_state
-        entity_id: sensor.autotalli_temperature
-        below: -10
-      - condition: state
-        entity_id: input_boolean.golf
-        state: 'on'
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.golf_20b
-        state: 'on'
-      - condition: numeric_state
-        entity_id: sensor.autotalli_temperature
-        below: -20
-      - condition: state
-        entity_id: input_boolean.golf
-        state: 'on'
-  action:
-  - service: script.turn_on
-    entity_id: script.autojen_lammitys
-    data:
-      variables:
-        car: timer.golf
-  - service: switch.turn_on
-    entity_id: switch.golf
-  - service: telegram_bot.send_message
-    data_template:
-      title: '*Golf lämmitys päälle*'
-      target: !secret telegram_chat3
-      message: 'Pyydetty lämmitysaika:  {% if is_state(''input_boolean.golf'', ''on'')  -%}{{
-        states(''input_datetime.golf'') }} {%- else -%}Käynnistetty käsin{%- endif
-        %} autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
-  - service: input_boolean.turn_off
-    entity_id: input_boolean.golf
-- id: golf_heating_off
-  alias: Golf lämmitys pois
-  trigger:
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.golf
-  action:
-  - service: switch.turn_off
-    entity_id: switch.golf
-  - service: telegram_bot.send_message
-    data_template:
-      title: '*Golf lämmitys pois*'
-      target: !secret telegram_chat3
-      message: 'Pyydetty lämmitysaika oli:  {{ states(''input_datetime.golf'') }}
-        autotallin lämpötila on {{ states(''sensor.autotalli_temperature'') }}'
 - id: ocatavia_heating_on
   alias: Octavia lämmitys
   trigger:
@@ -205,11 +113,9 @@
 - id: Garage_door_closed
   alias: Autotallin ovi kiinni
   trigger:
-    platform: event
-    event_type: deconz_event
-    event_data:
-      id: eteinen
-      event: 5002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinEteinen/action"
+    payload: arrow_right_click
   condition:
   - condition: state
     entity_id: cover.autotallin_ovi
@@ -223,11 +129,9 @@
 - id: Garage_door_timer
   alias: Autotallin ovi ajastin
   trigger:
-    platform: event
-    event_type: deconz_event
-    event_data:
-      id: eteinen
-      event: 5002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinEteinen/action"
+    payload: arrow_right_click
   condition:
   - condition: state
     entity_id: cover.autotallin_ovi
@@ -241,7 +145,7 @@
   alias: Autotallin ovi auki
   trigger:
     platform: state
-    entity_id: binary_sensor.openclose_20
+    entity_id: binary_sensor.etuovianturi_contact
     to: 'on'
   condition:
   - condition: state
@@ -256,3 +160,122 @@
   - service: timer.cancel
     target:
       entity_id: timer.garagedooropen
+- id: Overcurrent
+  alias: Liikaa virtaa
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_a_current
+    above: 25
+  - platform: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_b_current
+    above: 25
+  - platform: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_c_current
+    above: 25
+  action:
+  - service: number.set_value
+    data:
+      value: 12
+    target:
+      entity_id: number.go_echarger_202759_amp
+- id: Freecurrent
+  alias: Vapaata virtaa
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_a_current
+    below: 18
+    for:
+      minutes: 10
+  - platform: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_b_current
+    below: 18
+    for:
+      minutes: 10
+  - platform: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_c_current
+    below: 18
+    for:
+      minutes: 10
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_a_current
+    below: 18
+  - condition: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_b_current
+    below: 18
+  - condition: numeric_state
+    entity_id: sensor.shellyem3_bcff4dfd1132_channel_c_current
+    below: 18
+  action:
+  - service: number.set_value
+    data:
+      value: 16
+    target:
+      entity_id: number.go_echarger_202759_amp
+- id: Blockcarcharge
+  alias: Auton lataus estetyksi
+  trigger:
+  - platform: state
+    entity_id: sensor.go_echarger_202759_car
+    to: "Idle"
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.go_echarger_202759_acs
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.enyaqmanuaali
+  - service: select.select_option
+    data:
+      option: Neutral
+    target:
+      entity_id: select.go_echarger_202759_frc
+- id: Carparked
+  alias: Auton lataus valmiiksi
+  trigger:
+  - platform: state
+    entity_id: sensor.go_echarger_202759_car
+    from: "Idle"
+  action:
+  - service: select.select_option
+    data:
+      option: Neutral
+    target:
+      entity_id: select.go_echarger_202759_frc
+- id: Carcharge
+  alias: Auton lataus
+  trigger:
+  - platform: state
+    entity_id: input_boolean.enyaqmanuaali
+    to: "on"
+  - platform: state
+    entity_id: select.go_echarger_202759_frc
+    to: "Charge"
+  condition:
+  - condition: not
+    alias: "Auton pitää olla paikalla"
+    conditions:
+    - condition: state
+      entity_id: sensor.go_echarger_202759_car
+      state: "Idle"
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.go_echarger_202759_acs
+  - service: select.select_option
+    data:
+      option: Charge
+    target:
+      entity_id: select.go_echarger_202759_frc
+
+- id: freememory
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.memory_free
+    below: 50
+    for: "00:05:00"
+  action:
+  - alias: "vapauta muistia"
+    service: hassio.addon_restart
+    data:
+      addon: a0d7b954_appdaemon

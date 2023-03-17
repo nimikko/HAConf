@@ -5,14 +5,20 @@
     entity_id: sun.sun
     attribute: elevation
     below: 0
+  - platform: numeric_state
+    entity_id: sensor.spot_cost
+    below: 40
   - platform: template
     value_template: >
-      {{ is_state('sensor.time', '07:30' if is_state('binary_sensor.workday_sensor', 'off') else '07:00') }}
+      {{ is_state('sensor.time', '08:00' if is_state('binary_sensor.workday_sensor', 'off') else '07:00') }}
   condition:
   - condition: numeric_state
     entity_id: sun.sun
     attribute: elevation
-    below: 0.1
+    below: 0.1  
+  - condition: numeric_state
+    entity_id: sensor.spot_cost
+    below: 40
   - condition: time
     after: "07:00:00"
     before: "23:00:00"
@@ -32,10 +38,28 @@
     attribute: elevation
     below: 0.1
   - condition: time
-    after: "15:00:00"
-    before: "23:00:00"
+    after: "14:00:00"
+    before: "21:00:00"
+  - condition: numeric_state
+    entity_id: sensor.spot_cost
+    below: 20
   action:
   - service: switch.turn_on
+    entity_id: switch.ajopiha
+- id: decoration_lights_outside_off
+  alias: Valot pois klo 21 ja aamulla kun aurinko on noussut
+  trigger:
+  - platform: time
+    at: '21:10'
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    above: -0.9
+  - platform: numeric_state
+    entity_id: sensor.spot_cost
+    above: 20
+  action:
+  - service: switch.turn_off
     entity_id: group.pihavalot
 - id: decoration_lights_off
   alias: Valot pois klo 23 ja aamulla kun aurinko on noussut
@@ -46,17 +70,29 @@
     entity_id: sun.sun
     attribute: elevation
     above: -0.9
+  - platform: numeric_state
+    entity_id: sensor.spot_cost
+    above: 40
   action:
   - service: switch.turn_off
     entity_id: group.koristevalot
   - service: switch.turn_off
     entity_id: group.pihavalot
+- id: decoration_lights_off_Joonas
+  alias: Valot pois klo 19:30
+  trigger:
+  - platform: time
+    at: '19:30'
+  action:
+  - service: switch.turn_off
+    entity_id: switch.p5
 - id: Flora_lights_on
   alias: Kukkavalot päälle 
   trigger:
-  - platform: template
-    value_template: >
-      {{ is_state('sensor.time', '08:00' if is_state('binary_sensor.workday_sensor', 'off') else '07:00') }}
+  - platform: state
+    entity_id: input_boolean.flora
+    from: 'off'
+    to: 'on'
   action:
   - service: switch.turn_on
     entity_id: group.kukkavalot
@@ -67,8 +103,10 @@
 - id: Flora_lights_off
   alias: Kukkavalot pois 
   trigger:
-  - platform: time
-    at: '18:00'
+  - platform: state
+    entity_id: input_boolean.flora
+    from: 'on'
+    to: 'off'
   action:
   - service: switch.turn_off
     entity_id: group.kukkavalot
@@ -120,13 +158,11 @@
   - service: light.turn_off
     entity_id: light.koristevalo
 - id: Bathroom_lights
-  alias: Ison vessan valot
+  alias: Ison vessan peilivalo
   trigger:
-    platform: event
-    event_type: deconz_event
-    event_data:
-      id: xiami_nappi
-      event: 1002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinIsoWC2/action"
+    payload: single
   action:
   - service: switch.toggle
     entity_id: switch.peilikaappi
@@ -150,21 +186,15 @@
 - id: hallway_lights_on
   alias: Käytävän valot päälle
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: eteinen
-      event: 2002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: ruokahuone
-      event: 2002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: keittio
-      event: 2002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinEteinen/action"
+    payload: brightness_up_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinRuokahuone/action"
+    payload: brightness_up_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKeittio/action"
+    payload: brightness_up_click
   action:
   - service: light.turn_on
     entity_id: light.kaytava_yla
@@ -173,21 +203,15 @@
 - id: hallway_lights_off
   alias: Käytävän valot pois
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: eteinen
-      event: 3002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: ruokahuone
-      event: 3002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: keittio
-      event: 3002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinEteinen/action"
+    payload: brightness_down_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinRuokahuone/action"
+    payload: brightness_down_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKeittio/action"
+    payload: brightness_down_click
   action:
   - service: light.turn_off
     entity_id: light.kaytava_yla
@@ -196,11 +220,9 @@
 - id: all_lights_off_timer
   alias: Valot pois ajastin
   trigger:
-    platform: event
-    event_type: deconz_event
-    event_data:
-      id: eteinen
-      event: 1002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinEteinen/action"
+    payload: toggle
   action:
   - service: timer.start
     data:
@@ -210,7 +232,7 @@
   alias: Kaikki valot pois
   trigger:
     platform: state
-    entity_id: binary_sensor.openclose_20
+    entity_id: binary_sensor.etuovianturi_contact
     to: 'on'
   condition:
   - condition: state
@@ -226,114 +248,84 @@
 - id: storage_lights
   alias: Vaatehuoneen valot
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: kodinhoitohuone2
-      event: 3002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: vaatehuone2
-      event: 1002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: kodinhoitohuone2
-      event: 2002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: kodinhoitohuone2
-      event: 4002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: kodinhoitohuone2
-      event: 5002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKodinhoitohuone2/action"
+    payload: arrow_right_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKodinhoitohuone2/action"
+    payload: arrow_left_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKodinhoitohuone2/action"
+    payload: brightness_up_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKodinhoitohuone2/action"
+    payload: brightness_down_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinVaatehuone/action"
+    payload: arrow_right_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinVaatehuone/action"
+    payload: arrow_left_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinVaatehuone/action"
+    payload: brightness_up_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinVaatehuone/action"
+    payload: brightness_down_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinVaatehuone/action"
+    payload: toggle
   action:
   - service: switch.toggle
     entity_id: switch.vaatehuone
 - id: laundryroom_lights
   alias: Kodinhoitohuoneen valot
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: kodinhoitohuone
-      event: 1002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: kodinhoitohuone2
-      event: 1002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKodinhoitohuone/action"
+    payload: toggle
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKodinhoitohuone2/action"
+    payload: toggle
   action:
   - service: switch.toggle
     entity_id: switch.kodinhoitohuone
 - id: diningroom_lights
   alias: Ruokahuone valot
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: ruokahuone
-      event: 1002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: keittio
-      event: 4002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: keittio
-      event: 1002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinRuokahuone/action"
+    payload: toggle
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKeittio/action"
+    payload: toggle
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKeittio/action"
+    payload: arrow_left_click
   action:
   - service: switch.toggle
     entity_id: switch.ruokahuone
 - id: sauna_lights
   alias: Sauna valot
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: sauna
-      event: 1002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinSauna/action"
+    payload: toggle
   action:
   - service: switch.toggle
     entity_id: switch.sauna
 - id: kitchen_lights
   alias: Keittiö valot
   trigger:
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: keittio
-      event: 5002
-  - platform: event
-    event_type: deconz_event
-    event_data:
-      id: ruokahuone
-      event: 5002
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinKeittio/action"
+    payload: arrow_right_click
+  - platform: mqtt
+    topic: "zigbee2mqtt/KytkinRuokahuone/action"
+    payload: arrow_right_click
   action:
   - service: switch.toggle
     entity_id: switch.keittio_2
-- id: night_lights_on
-  alias: Yövalot päälle ennen nukkumaan menoa
-  trigger:
-  - platform: time
-    at: '18:30'
-  action:
-    service: switch.turn_on
-    entity_id: switch.makuuhuone
-- id: night_lights_off
-  alias: Yövalot pois aamulla klo 8:30
-  trigger:
-  - platform: time
-    at: '8:30'
-  action:
-  - service: switch.turn_off
-    entity_id: switch.makuuhuone
 - id: Notification
   alias: Ilmoitus liikkeestä
   trigger:

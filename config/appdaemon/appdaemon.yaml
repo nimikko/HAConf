@@ -2,6 +2,12 @@ appdaemon:
   plugins:
     HASS:
       type: hass
+    MQTT:
+      type: mqtt
+      namespace: mqtt # This is important
+      client_host: core-mosquitto
+      client_user: !secret mqtt_username
+      client_password: !secret mqtt_password
   latitude: !secret lat
   longitude: !secret lon
   elevation: 32
