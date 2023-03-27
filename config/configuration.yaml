@@ -85,15 +85,14 @@ light:
   - platform: group
     name: Kaikki valot
     entities:
-    - light.tyohuone_lednauha
-    - light.tyohuone_ledpaneelit
+    - light.joonaspaneelit
     - light.joonaskatto
     - light.olohuoneiso
     - light.olohuonepieni
-    - light.olohuone_ovet
-    - light.wc
+    - light.olohuoneovi
+    - light.isowc
     - light.valopikkuwc
-    - light.makuuhuone
+    - light.makuuhuonekatto
     - light.koristevalo
     - light.mikkokatto
     - light.tyttikatto
@@ -105,7 +104,7 @@ light:
     entities:
     - light.kukkavalo
     - light.valoolohuonekukkaled
-    - light.tyohuone_lednauha2
+    - light.valomikkolednauha
 input_boolean:
   enyaqautomaatti:
     name: Enyaq automaatti lataus

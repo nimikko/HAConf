@@ -314,6 +314,24 @@
   action:
   - service: switch.toggle
     entity_id: switch.sauna
+- id: Joonas_lights_on
+  alias: Joonaksen valot päälle
+  trigger:
+  - platform: mqtt
+    topic: "zigbee2mqtt/Kytkin_Joonas/action"
+    payload: on
+  action:
+  - service: switch.turn_on
+    entity_id: switch.p7
+- id: Joonas_lights_off
+  alias: Joonaksen valot pois
+  trigger:
+  - platform: mqtt
+    topic: "zigbee2mqtt/Kytkin_Joonas/action"
+    payload: off
+  action:
+  - service: switch.turn_on
+    entity_id: switch.p7
 - id: kitchen_lights
   alias: Keittiö valot
   trigger:

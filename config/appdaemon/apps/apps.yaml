@@ -54,12 +54,16 @@ tyohuonelednauhat:
   controller: tyohuone_lednauhat
   integration: deconz
   light: light.tyohuone_lednauha
-tyohuoneledpaneelit:
+joonasledpaneelit:
   module: controllerx
-  class: E1810Controller
-  controller: tyohuone_ledpaneelit
-  integration: deconz
-  light: light.tyohuone_ledpaneelit
+  class: E1810Z2MLightController
+  controller: KytkinJoonasPaneelit
+  integration: 
+    name: z2m
+    listen_to: mqtt
+  light: 
+    name: JoonasPaneelit
+    mode: mqtt
 tyohuonet:
   module: controllerx
   class: E1810Z2MLightController
@@ -259,6 +263,9 @@ EnergyHouseForce:
 #   class: Automover
 #   weatherid: weather.lappi
 #   automover: vacuum.automower_r_315x_automower
+SolarOptimization:
+  module: solaroptimization
+  class: Solaroptimization
 EnergyFlora1:
   module: deviceoptimization2
   class: Deviceoptimization2

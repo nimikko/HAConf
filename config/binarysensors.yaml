@@ -14,7 +14,8 @@
         value_template: "{{ is_state('sensor.octavia_20',states('sensor.time')|string) }}"
       palju:
         value_template: "{{ states('sensor.ulko_temperature')|float>8 }}"
-      sisaheatneeded:
-        value_template: "{{ states('sensor.2_olohuone') |float < states('input_number.temperature') |float }}"
+      solar_energy_free:
+        state: >
+          "{{ states('sensor.energy_hour')|float <-0.1 }}"
   - platform: workday
     country: FI

@@ -18,7 +18,7 @@
       unit_of_measurement: kWh
       state: >
         {% if is_number(states('sensor.hourly_energy_a')) and is_number(states('sensor.hourly_energy_b')) and is_number(states('sensor.hourly_energy_c')) and is_number(states('sensor.hourly_energy_a_ret')) and is_number(states('sensor.hourly_energy_b_ret')) and is_number(states('sensor.hourly_energy_c_ret')) %}
-          {{ states('sensor.hourly_energy_a') | float + states('sensor.hourly_energy_b') | float + states('sensor.hourly_energy_c') | float + states('sensor.hourly_energy_a_ret') | float + states('sensor.hourly_energy_b_ret') | float + states('sensor.hourly_energy_c_ret') | float }}
+          {{ states('sensor.hourly_energy_a') | float + states('sensor.hourly_energy_b') | float + states('sensor.hourly_energy_c') | float - states('sensor.hourly_energy_a_ret') | float - states('sensor.hourly_energy_b_ret') | float - states('sensor.hourly_energy_c_ret') | float }}
         {% else %}
           None
         {% endif %}
